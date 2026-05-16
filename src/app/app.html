@@ -1,0 +1,60 @@
+<main class="todo-page">
+  <section class="todo-shell" aria-labelledby="todo-title">
+    <header class="todo-header">
+      <div>
+        <p class="eyebrow">Todo List</p>
+        <h1 id="todo-title">Mes taches</h1>
+      </div>
+
+      <div class="todo-stats" aria-label="Resume des taches">
+        <span>{{ remainingCount() }} a faire</span>
+        <span>{{ completedCount() }} terminee(s)</span>
+      </div>
+    </header>
+
+    <form class="todo-form" (ngSubmit)="addTodo()" aria-label="Ajouter une tache">
+      <label for="new-todo">Nouvelle tache</label>
+      <div class="todo-form-row">
+        <input
+          id="new-todo"
+          name="newTodo"
+          type="text"
+          placeholder="Ex: preparer la structure du projet"
+          [ngModel]="newTodoTitle()"
+          (ngModelChange)="newTodoTitle.set($event)"
+          autocomplete="off"
+        />
+        <button type="submit">Ajouter</button>
+      </div>
+    </form>
+
+    <ul class="todo-list" aria-label="Liste des taches">
+      @for (todo of todos(); track todo.id) {
+        <li class="todo-item" [class.is-completed]="todo.completed">
+          <label class="todo-check">
+            <input
+              type="checkbox"
+              [checked]="todo.completed"
+              (change)="toggleTodo(todo.id)"
+            />
+            <span>{{ todo.title }}</span>
+          </label>
+
+          <button
+            class="delete-button"
+            type="button"
+            (click)="deleteTodo(todo.id)"
+            [attr.aria-label]="'Supprimer ' + todo.title"
+          >
+            Supprimer
+          </button>
+        </li>
+      } @empty {
+        <li class="empty-state">
+          <strong>Aucune tache pour le moment.</strong>
+          <span>Ajoute ta premiere tache pour demarrer.</span>
+        </li>
+      }
+    </ul>
+  </section>
+</main>
