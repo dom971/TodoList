@@ -100,6 +100,11 @@ h1 {
     outline: none;
   }
 
+  input:disabled {
+    background: #f8fafc;
+    color: #94a3b8;
+  }
+
   button {
     height: 46px;
     padding: 0 18px;
@@ -115,6 +120,21 @@ h1 {
   button:hover {
     background: #1d4ed8;
   }
+
+  button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+  }
+}
+
+.error-message {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fff7f7;
+  color: #b91c1c;
+  font-weight: 700;
 }
 
 .todo-list {
@@ -171,17 +191,70 @@ h1 {
   }
 }
 
-.delete-button {
+.todo-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.edit-form {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+
+  input {
+    min-width: 0;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #111827;
+  }
+
+  input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+    outline: none;
+  }
+}
+
+.delete-button,
+.secondary-button,
+.save-button {
   height: 36px;
   padding: 0 12px;
-  border: 1px solid #fecaca;
   border-radius: 8px;
-  background: #fff7f7;
-  color: #b91c1c;
   cursor: pointer;
   font: inherit;
   font-size: 0.9rem;
   font-weight: 800;
+}
+
+.secondary-button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+}
+
+.secondary-button:hover {
+  background: #f8fafc;
+}
+
+.save-button {
+  border: 1px solid #1d4ed8;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.save-button:hover {
+  background: #1d4ed8;
+}
+
+.delete-button {
+  border: 1px solid #fecaca;
+  background: #fff7f7;
+  color: #b91c1c;
 }
 
 .delete-button:hover {
@@ -222,7 +295,18 @@ h1 {
     grid-template-columns: 1fr;
   }
 
-  .delete-button {
+  .edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .delete-button,
+  .secondary-button,
+  .save-button {
     width: 100%;
   }
 }

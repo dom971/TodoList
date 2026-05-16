@@ -1,10 +1,25 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { SupabaseService } from './core/supabase.service';
 
 describe('App', () => {
+  const supabaseMock = {
+    from: () => ({
+      select: () => ({
+        order: () => Promise.resolve({ data: [], error: null }),
+      }),
+    }),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [
+        {
+          provide: SupabaseService,
+          useValue: { client: supabaseMock },
+        },
+      ],
     }).compileComponents();
   });
 
@@ -16,9 +31,10 @@ describe('App', () => {
 
   it('should render the todo application', async () => {
     const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Mes taches');
-    expect(compiled.textContent).toContain('Creer la premiere interface Todo');
+    expect(compiled.textContent).toContain('Aucune tache pour le moment.');
   });
 });

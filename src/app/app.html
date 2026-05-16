@@ -12,6 +12,10 @@
       </div>
     </header>
 
+    @if (errorMessage()) {
+      <p class="error-message" role="alert">{{ errorMessage() }}</p>
+    }
+
     <form class="todo-form" (ngSubmit)="addTodo()" aria-label="Ajouter une tache">
       <label for="new-todo">Nouvelle tache</label>
       <div class="todo-form-row">
@@ -23,37 +27,75 @@
           [ngModel]="newTodoTitle()"
           (ngModelChange)="newTodoTitle.set($event)"
           autocomplete="off"
+          [disabled]="isSaving()"
         />
-        <button type="submit">Ajouter</button>
+        <button type="submit" [disabled]="isSaving()">
+          {{ isSaving() ? 'Ajout...' : 'Ajouter' }}
+        </button>
       </div>
     </form>
 
     <ul class="todo-list" aria-label="Liste des taches">
-      @for (todo of todos(); track todo.id) {
-        <li class="todo-item" [class.is-completed]="todo.completed">
-          <label class="todo-check">
-            <input
-              type="checkbox"
-              [checked]="todo.completed"
-              (change)="toggleTodo(todo.id)"
-            />
-            <span>{{ todo.title }}</span>
-          </label>
-
-          <button
-            class="delete-button"
-            type="button"
-            (click)="deleteTodo(todo.id)"
-            [attr.aria-label]="'Supprimer ' + todo.title"
-          >
-            Supprimer
-          </button>
-        </li>
-      } @empty {
+      @if (isLoading()) {
         <li class="empty-state">
-          <strong>Aucune tache pour le moment.</strong>
-          <span>Ajoute ta premiere tache pour demarrer.</span>
+          <strong>Chargement des taches...</strong>
+          <span>Connexion a Supabase en cours.</span>
         </li>
+      } @else {
+        @for (todo of todos(); track todo.id) {
+        <li class="todo-item" [class.is-completed]="todo.completed">
+          @if (editingTodoId() === todo.id) {
+            <form class="edit-form" (ngSubmit)="saveTodoTitle(todo)">
+              <input
+                name="editingTodo"
+                type="text"
+                [ngModel]="editingTodoTitle()"
+                (ngModelChange)="editingTodoTitle.set($event)"
+                [attr.aria-label]="'Modifier ' + todo.title"
+              />
+              <div class="todo-actions">
+                <button class="save-button" type="submit">Enregistrer</button>
+                <button class="secondary-button" type="button" (click)="cancelEdit()">
+                  Annuler
+                </button>
+              </div>
+            </form>
+          } @else {
+            <label class="todo-check">
+              <input
+                type="checkbox"
+                [checked]="todo.completed"
+                (change)="toggleTodo(todo)"
+              />
+              <span>{{ todo.title }}</span>
+            </label>
+
+            <div class="todo-actions">
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="startEdit(todo)"
+                [attr.aria-label]="'Modifier ' + todo.title"
+              >
+                Modifier
+              </button>
+              <button
+                class="delete-button"
+                type="button"
+                (click)="deleteTodo(todo.id)"
+                [attr.aria-label]="'Supprimer ' + todo.title"
+              >
+                Supprimer
+              </button>
+            </div>
+          }
+        </li>
+        } @empty {
+          <li class="empty-state">
+            <strong>Aucune tache pour le moment.</strong>
+            <span>Ajoute ta premiere tache pour demarrer.</span>
+          </li>
+        }
       }
     </ul>
   </section>
