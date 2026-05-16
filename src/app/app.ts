@@ -1,11 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-interface Todo {
-  id: number;
-  title: string;
-  completed: boolean;
-}
+import { Todo } from './todos/todo.model';
 
 @Component({
   selector: 'app-root',
