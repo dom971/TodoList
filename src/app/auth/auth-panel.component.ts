@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../core/auth.service';
 
@@ -11,17 +12,30 @@ import { AuthService } from '../core/auth.service';
 })
 export class AuthPanelComponent {
   protected readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
-  protected submit(): Promise<void> {
+  protected async submit(): Promise<void> {
     if (this.auth.mode() === 'reset-password') {
-      return this.auth.requestPasswordReset();
+      await this.auth.requestPasswordReset();
+      return;
     }
 
     if (this.auth.mode() === 'update-password') {
-      return this.auth.updatePassword();
+      await this.auth.updatePassword();
+      return;
     }
 
-    return this.auth.mode() === 'sign-in' ? this.auth.signIn() : this.auth.signUp();
+    if (this.auth.mode() === 'sign-in') {
+      await this.auth.signIn();
+
+      if (this.auth.session()) {
+        await this.router.navigate(['/app/todos']);
+      }
+
+      return;
+    }
+
+    await this.auth.signUp();
   }
 
   protected toggleMode(): void {
