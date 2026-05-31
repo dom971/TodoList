@@ -48,7 +48,6 @@ export class TodoBoardComponent {
   });
 
   protected readonly userEmail = computed(() => this.auth.session()?.user.email ?? '');
-  protected readonly userId = computed(() => this.auth.session()?.user.id ?? '');
 
   protected addTodo(): Promise<void> {
     return this.withUser((userId) => this.todosService.addTodo(userId));

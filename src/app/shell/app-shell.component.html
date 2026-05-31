@@ -12,6 +12,17 @@
         <a routerLink="/app/coming-soon" routerLinkActive="is-active">À venir</a>
       </nav>
 
+      <section class="account-summary" aria-label="Compte">
+        <div>
+          <span>Compte</span>
+          <strong>{{ userEmail() }}</strong>
+        </div>
+        <div>
+          <span>Identifiant</span>
+          <strong>{{ userId().slice(0, 8) }}...</strong>
+        </div>
+      </section>
+
       <button class="sign-out-button" type="button" (click)="signOut()">
         Déconnexion
       </button>

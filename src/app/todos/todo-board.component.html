@@ -2,7 +2,6 @@
   <div>
     <p class="eyebrow">Module tâches</p>
     <h1 id="todo-title">Mes tâches</h1>
-    <p class="user-email">{{ userEmail() }}</p>
   </div>
 
   <div class="header-side">
@@ -12,17 +11,6 @@
     </div>
   </div>
 </header>
-
-<section class="profile-strip" aria-label="Profil">
-  <div>
-    <span>Compte</span>
-    <strong>{{ userEmail() }}</strong>
-  </div>
-  <div>
-    <span>Identifiant</span>
-    <strong>{{ userId().slice(0, 8) }}...</strong>
-  </div>
-</section>
 
 @if (todosService.errorMessage()) {
   <p class="error-message" role="alert">{{ todosService.errorMessage() }}</p>

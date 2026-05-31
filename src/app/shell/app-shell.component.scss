@@ -87,6 +87,37 @@ h1 {
   background: #f8fafc;
 }
 
+.account-summary {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #f8fafc;
+
+  div {
+    min-width: 0;
+  }
+
+  span {
+    display: block;
+    margin-bottom: 4px;
+    color: #64748b;
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    overflow: hidden;
+    color: #1f2937;
+    font-size: 0.92rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .app-content {
   min-width: 0;
 }
@@ -153,5 +184,10 @@ h1 {
     justify-self: end;
     min-width: 160px;
     text-align: center;
+  }
+
+  .account-summary {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 }
