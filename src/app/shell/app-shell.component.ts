@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../core/auth.service';
 
@@ -11,4 +11,10 @@ import { AuthService } from '../core/auth.service';
 })
 export class AppShellComponent {
   protected readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  protected async signOut(): Promise<void> {
+    await this.auth.signOut();
+    await this.router.navigate(['/auth']);
+  }
 }
