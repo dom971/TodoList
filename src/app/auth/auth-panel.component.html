@@ -1,25 +1,52 @@
 <p class="eyebrow">Todo List</p>
 <h1 id="auth-title">
-  {{ auth.mode() === 'sign-in' ? 'Connexion' : 'Inscription' }}
+  @switch (auth.mode()) {
+    @case ('sign-in') {
+      Connexion
+    }
+    @case ('sign-up') {
+      Inscription
+    }
+    @case ('reset-password') {
+      Mot de passe oublie
+    }
+    @case ('update-password') {
+      Nouveau mot de passe
+    }
+  }
 </h1>
-<p class="auth-copy">Connecte-toi pour retrouver tes taches sur tous tes appareils.</p>
+<p class="auth-copy">
+  @switch (auth.mode()) {
+    @case ('reset-password') {
+      Entre ton email pour recevoir un lien de reinitialisation.
+    }
+    @case ('update-password') {
+      Saisis un nouveau mot de passe pour terminer la reinitialisation.
+    }
+    @default {
+      Connecte-toi pour retrouver tes taches sur tous tes appareils.
+    }
+  }
+</p>
 
-<div class="auth-tabs" aria-label="Mode authentification">
-  <button
-    type="button"
-    [class.is-active]="auth.mode() === 'sign-in'"
-    (click)="auth.switchMode('sign-in')"
-  >
-    Connexion
-  </button>
-  <button
-    type="button"
-    [class.is-active]="auth.mode() === 'sign-up'"
-    (click)="auth.switchMode('sign-up')"
-  >
-    Inscription
-  </button>
-</div>
+@if (auth.mode() === 'sign-in' || auth.mode() === 'sign-up') {
+  <div class="auth-tabs" aria-label="Mode authentification">
+    <button
+      type="button"
+      [class.is-active]="auth.mode() === 'sign-in'"
+      (click)="auth.switchMode('sign-in')"
+    >
+      Connexion
+    </button>
+    <button
+      type="button"
+      [class.is-active]="auth.mode() === 'sign-up'"
+      (click)="auth.switchMode('sign-up')"
+    >
+      Inscription
+    </button>
+  </div>
+}
 
 @if (auth.errorMessage()) {
   <p class="error-message" role="alert">{{ auth.errorMessage() }}</p>
@@ -30,27 +57,44 @@
 }
 
 <form class="auth-form" (ngSubmit)="submit()" aria-label="Authentification">
-  <label for="auth-email">Email</label>
-  <input
-    id="auth-email"
-    name="email"
-    type="email"
-    autocomplete="email"
-    [ngModel]="auth.email()"
-    (ngModelChange)="auth.email.set($event)"
-    [disabled]="auth.isSubmitting()"
-  />
+  @if (auth.mode() !== 'update-password') {
+    <label for="auth-email">Email</label>
+    <input
+      id="auth-email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      [ngModel]="auth.email()"
+      (ngModelChange)="auth.email.set($event)"
+      [disabled]="auth.isSubmitting()"
+    />
+  }
 
-  <label for="auth-password">Mot de passe</label>
-  <input
-    id="auth-password"
-    name="password"
-    type="password"
-    autocomplete="current-password"
-    [ngModel]="auth.password()"
-    (ngModelChange)="auth.password.set($event)"
-    [disabled]="auth.isSubmitting()"
-  />
+  @if (auth.mode() === 'sign-in' || auth.mode() === 'sign-up') {
+    <label for="auth-password">Mot de passe</label>
+    <input
+      id="auth-password"
+      name="password"
+      type="password"
+      autocomplete="current-password"
+      [ngModel]="auth.password()"
+      (ngModelChange)="auth.password.set($event)"
+      [disabled]="auth.isSubmitting()"
+    />
+  }
+
+  @if (auth.mode() === 'update-password') {
+    <label for="auth-new-password">Nouveau mot de passe</label>
+    <input
+      id="auth-new-password"
+      name="newPassword"
+      type="password"
+      autocomplete="new-password"
+      [ngModel]="auth.newPassword()"
+      (ngModelChange)="auth.newPassword.set($event)"
+      [disabled]="auth.isSubmitting()"
+    />
+  }
 
   <button type="submit" [disabled]="auth.isSubmitting()">
     {{
@@ -58,15 +102,33 @@
         ? 'Veuillez patienter...'
         : auth.mode() === 'sign-in'
           ? 'Se connecter'
-          : 'Creer le compte'
+          : auth.mode() === 'sign-up'
+            ? 'Creer le compte'
+            : auth.mode() === 'reset-password'
+              ? 'Envoyer le lien'
+              : 'Mettre a jour'
     }}
   </button>
 </form>
+
+@if (auth.mode() === 'sign-in') {
+  <button class="link-button" type="button" (click)="auth.switchMode('reset-password')">
+    Mot de passe oublie ?
+  </button>
+}
+
+@if (auth.mode() === 'reset-password' || auth.mode() === 'update-password') {
+  <button class="link-button" type="button" (click)="auth.switchMode('sign-in')">
+    Retour a la connexion
+  </button>
+}
 
 <p class="auth-hint">
   {{
     auth.mode() === 'sign-in'
       ? 'Pas encore de compte ? Passe sur inscription.'
-      : 'Apres inscription, confirme ton email avant la premiere connexion.'
+      : auth.mode() === 'sign-up'
+        ? 'Apres inscription, confirme ton email avant la premiere connexion.'
+        : 'Le lien de reinitialisation respecte les URLs autorisees dans Supabase.'
   }}
 </p>

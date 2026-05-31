@@ -61,6 +61,38 @@ h1 {
   }
 }
 
+.profile-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 12px;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #f8fafc;
+
+  div {
+    min-width: 0;
+  }
+
+  span {
+    display: block;
+    margin-bottom: 4px;
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    overflow: hidden;
+    color: #1f2937;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .todo-form {
   margin-bottom: 22px;
 
@@ -130,6 +162,34 @@ h1 {
   background: #fff7f7;
   color: #b91c1c;
   font-weight: 700;
+}
+
+.filter-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #f8fafc;
+
+  button {
+    height: 36px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #475569;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+  }
+
+  button.is-active {
+    background: #ffffff;
+    color: #111827;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+  }
 }
 
 .todo-list {
@@ -297,6 +357,10 @@ h1 {
     justify-content: flex-start;
   }
 
+  .profile-strip {
+    grid-template-columns: 1fr;
+  }
+
   .todo-form-row,
   .edit-form {
     grid-template-columns: 1fr;
@@ -311,5 +375,17 @@ h1 {
   .secondary-button,
   .save-button {
     width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .filter-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-stats {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
   }
 }

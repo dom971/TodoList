@@ -1,9 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Session } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 import { SupabaseService } from './supabase.service';
 
-export type AuthMode = 'sign-in' | 'sign-up';
+export type AuthMode = 'sign-in' | 'sign-up' | 'reset-password' | 'update-password';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +15,7 @@ export class AuthService {
   readonly session = signal<Session | null>(null);
   readonly email = signal('');
   readonly password = signal('');
+  readonly newPassword = signal('');
   readonly mode = signal<AuthMode>('sign-in');
   readonly isLoading = signal(true);
   readonly isSubmitting = signal(false);
@@ -32,7 +33,8 @@ export class AuthService {
     this.isLoading.set(false);
 
     const { data: authListener } = this.supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
+        this.handleAuthEvent(event);
         this.session.set(session);
       },
     );
@@ -64,6 +66,58 @@ export class AuthService {
     await this.supabase.auth.signOut();
   }
 
+  async requestPasswordReset(): Promise<void> {
+    const email = this.email().trim();
+
+    if (!email) {
+      this.errorMessage.set('Renseigne ton email pour recevoir le lien.');
+      return;
+    }
+
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
+    this.statusMessage.set('');
+
+    const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
+
+    this.isSubmitting.set(false);
+
+    if (error) {
+      this.errorMessage.set(error.message);
+      return;
+    }
+
+    this.statusMessage.set('Email envoye. Ouvre le lien recu pour choisir un nouveau mot de passe.');
+  }
+
+  async updatePassword(): Promise<void> {
+    const password = this.newPassword();
+
+    if (password.length < 6) {
+      this.errorMessage.set('Choisis un mot de passe de 6 caracteres minimum.');
+      return;
+    }
+
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
+    this.statusMessage.set('');
+
+    const { error } = await this.supabase.auth.updateUser({ password });
+
+    this.isSubmitting.set(false);
+
+    if (error) {
+      this.errorMessage.set(error.message);
+      return;
+    }
+
+    this.newPassword.set('');
+    this.mode.set('sign-in');
+    this.statusMessage.set('Mot de passe mis a jour. Tu peux te connecter.');
+  }
+
   private async submit(mode: AuthMode): Promise<void> {
     const email = this.email().trim();
     const password = this.password();
@@ -91,6 +145,14 @@ export class AuthService {
 
     if (mode === 'sign-up') {
       this.statusMessage.set('Compte cree. Verifie tes emails pour confirmer ton inscription.');
+    }
+  }
+
+  private handleAuthEvent(event: AuthChangeEvent): void {
+    if (event === 'PASSWORD_RECOVERY') {
+      this.mode.set('update-password');
+      this.errorMessage.set('');
+      this.statusMessage.set('Choisis ton nouveau mot de passe.');
     }
   }
 }

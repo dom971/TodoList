@@ -23,7 +23,32 @@ export class TodoBoardComponent {
     () => this.todosService.todos().filter((todo) => todo.completed).length,
   );
 
+  protected readonly filteredTodos = computed(() => {
+    const todos = this.todosService.todos();
+
+    switch (this.todosService.filter()) {
+      case 'active':
+        return todos.filter((todo) => !todo.completed);
+      case 'completed':
+        return todos.filter((todo) => todo.completed);
+      default:
+        return todos;
+    }
+  });
+
+  protected readonly emptyTitle = computed(() => {
+    switch (this.todosService.filter()) {
+      case 'active':
+        return 'Aucune tache a faire.';
+      case 'completed':
+        return 'Aucune tache terminee.';
+      default:
+        return 'Aucune tache pour le moment.';
+    }
+  });
+
   protected readonly userEmail = computed(() => this.auth.session()?.user.email ?? '');
+  protected readonly userId = computed(() => this.auth.session()?.user.id ?? '');
 
   protected addTodo(): Promise<void> {
     return this.withUser((userId) => this.todosService.addTodo(userId));

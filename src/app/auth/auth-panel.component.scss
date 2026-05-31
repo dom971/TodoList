@@ -114,9 +114,33 @@ h1 {
   color: #166534;
 }
 
+.link-button,
 .auth-hint {
   margin: 16px 0 0;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.link-button:hover {
+  color: #1d4ed8;
+}
+
+.auth-hint {
   color: #64748b;
   font-size: 0.92rem;
   line-height: 1.5;
+}
+
+@media (max-width: 420px) {
+  .auth-tabs {
+    grid-template-columns: 1fr;
+  }
 }

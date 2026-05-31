@@ -3,6 +3,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { SupabaseService } from '../core/supabase.service';
 import { Todo } from './todo.model';
 
+export type TodoFilter = 'all' | 'active' | 'completed';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,12 +15,14 @@ export class TodosService {
   readonly newTodoTitle = signal('');
   readonly editingTodoId = signal<number | null>(null);
   readonly editingTodoTitle = signal('');
+  readonly filter = signal<TodoFilter>('all');
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
   readonly errorMessage = signal('');
 
   clear(): void {
     this.todos.set([]);
+    this.filter.set('all');
     this.isLoading.set(false);
     this.isSaving.set(false);
     this.cancelEdit();

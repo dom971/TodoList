@@ -16,6 +16,17 @@
   </div>
 </header>
 
+<section class="profile-strip" aria-label="Profil">
+  <div>
+    <span>Compte</span>
+    <strong>{{ userEmail() }}</strong>
+  </div>
+  <div>
+    <span>Identifiant</span>
+    <strong>{{ userId().slice(0, 8) }}...</strong>
+  </div>
+</section>
+
 @if (todosService.errorMessage()) {
   <p class="error-message" role="alert">{{ todosService.errorMessage() }}</p>
 }
@@ -39,6 +50,30 @@
   </div>
 </form>
 
+<div class="filter-tabs" aria-label="Filtrer les taches">
+  <button
+    type="button"
+    [class.is-active]="todosService.filter() === 'all'"
+    (click)="todosService.filter.set('all')"
+  >
+    Toutes
+  </button>
+  <button
+    type="button"
+    [class.is-active]="todosService.filter() === 'active'"
+    (click)="todosService.filter.set('active')"
+  >
+    A faire
+  </button>
+  <button
+    type="button"
+    [class.is-active]="todosService.filter() === 'completed'"
+    (click)="todosService.filter.set('completed')"
+  >
+    Termine(es)
+  </button>
+</div>
+
 <ul class="todo-list" aria-label="Liste des taches">
   @if (todosService.isLoading()) {
     <li class="empty-state">
@@ -46,7 +81,7 @@
       <span>Connexion a Supabase en cours.</span>
     </li>
   } @else {
-    @for (todo of todosService.todos(); track todo.id) {
+    @for (todo of filteredTodos(); track todo.id) {
       <li class="todo-item" [class.is-completed]="todo.completed">
         @if (todosService.editingTodoId() === todo.id) {
           <form class="edit-form" (ngSubmit)="saveTodoTitle(todo)">
@@ -100,8 +135,8 @@
       </li>
     } @empty {
       <li class="empty-state">
-        <strong>Aucune tache pour le moment.</strong>
-        <span>Ajoute ta premiere tache pour demarrer.</span>
+        <strong>{{ emptyTitle() }}</strong>
+        <span>Change de filtre ou ajoute une nouvelle tache.</span>
       </li>
     }
   }

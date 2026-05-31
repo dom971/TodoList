@@ -13,6 +13,14 @@ export class AuthPanelComponent {
   protected readonly auth = inject(AuthService);
 
   protected submit(): Promise<void> {
+    if (this.auth.mode() === 'reset-password') {
+      return this.auth.requestPasswordReset();
+    }
+
+    if (this.auth.mode() === 'update-password') {
+      return this.auth.updatePassword();
+    }
+
     return this.auth.mode() === 'sign-in' ? this.auth.signIn() : this.auth.signUp();
   }
 

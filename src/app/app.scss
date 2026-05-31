@@ -51,7 +51,12 @@ h1 {
 }
 
 @media (max-width: 640px) {
+  .app-page {
+    align-items: start;
+    padding: 18px 12px;
+  }
+
   .app-shell {
-    padding: 22px;
+    padding: 18px;
   }
 }
