@@ -1,0 +1,112 @@
+<header class="scanner-header">
+  <div>
+    <p class="eyebrow">Module scanner</p>
+    <h1 id="scanner-title">Lecteur de code-barres</h1>
+    <p class="muted-text">Scanne un QR code ou un code-barres avec la caméra.</p>
+  </div>
+</header>
+
+@if (cameraMessage()) {
+  <p class="error-message" role="alert">{{ cameraMessage() }}</p>
+}
+
+@if (scansService.errorMessage()) {
+  <p class="error-message" role="alert">{{ scansService.errorMessage() }}</p>
+}
+
+<section class="scanner-panel" aria-labelledby="camera-title">
+  <div>
+    <h2 id="camera-title">Caméra</h2>
+    <p>Sur iOS, autorise l’accès caméra lorsque Safari le demande.</p>
+  </div>
+
+  <div class="video-frame">
+    <video #previewVideo muted playsinline></video>
+    @if (!isScanning()) {
+      <span>Caméra arrêtée</span>
+    }
+  </div>
+
+  <div class="scanner-actions">
+    <button class="primary-button" type="button" (click)="startScanner()" [disabled]="isScanning()">
+      Démarrer
+    </button>
+    <button class="secondary-button" type="button" (click)="stopScanner()" [disabled]="!isScanning()">
+      Arrêter
+    </button>
+  </div>
+</section>
+
+<section class="result-panel" aria-labelledby="result-title">
+  <h2 id="result-title">Résultat</h2>
+
+  @if (scannedValue()) {
+    <dl>
+      <div>
+        <dt>Format</dt>
+        <dd>{{ scannedFormat() || 'Non identifié' }}</dd>
+      </div>
+      <div>
+        <dt>Valeur</dt>
+        <dd>{{ scannedValue() }}</dd>
+      </div>
+    </dl>
+
+    <label for="scan-label">Libellé</label>
+    <input
+      id="scan-label"
+      name="scanLabel"
+      type="text"
+      placeholder="Ex : produit, document, lien..."
+      [ngModel]="scansService.label()"
+      (ngModelChange)="scansService.label.set($event)"
+    />
+
+    <button
+      class="primary-button"
+      type="button"
+      (click)="saveCurrentScan()"
+      [disabled]="scansService.isSaving()"
+    >
+      {{ scansService.isSaving() ? 'Enregistrement...' : 'Enregistrer le scan' }}
+    </button>
+  } @else {
+    <p class="empty-copy">Aucun code scanné pour le moment.</p>
+  }
+</section>
+
+<section class="history-panel" aria-labelledby="history-title">
+  <h2 id="history-title">Historique</h2>
+
+  <ul class="scan-list" aria-label="Historique des scans">
+    @if (scansService.isLoading()) {
+      <li class="empty-state">
+        <strong>Chargement de l’historique...</strong>
+        <span>Connexion à Supabase en cours.</span>
+      </li>
+    } @else {
+      @for (scan of scansService.scans(); track scan.id) {
+        <li class="scan-item">
+          <div>
+            <strong>{{ scan.label || scan.format || 'Scan' }}</strong>
+            <span>{{ scan.value }}</span>
+          </div>
+
+          <button
+            class="delete-button"
+            type="button"
+            (click)="deleteScan(scan.id)"
+            [attr.aria-label]="'Supprimer le scan ' + scan.value"
+          >
+            Supprimer
+          </button>
+        </li>
+      } @empty {
+        <li class="empty-state">
+          <strong>Aucun scan enregistré.</strong>
+          <span>Scanne un code, puis enregistre le résultat.</span>
+        </li>
+      }
+    }
+  </ul>
+</section>

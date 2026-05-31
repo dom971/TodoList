@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { AuthService } from './core/auth.service';
 import { NotesService } from './notes/notes.service';
+import { ScansService } from './scanner/scans.service';
 import { TodosService } from './todos/todos.service';
 
 describe('App', () => {
@@ -22,6 +23,10 @@ describe('App', () => {
     clear: () => undefined,
     loadNotes: () => Promise.resolve(),
   };
+  const scansServiceMock = {
+    clear: () => undefined,
+    loadScans: () => Promise.resolve(),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,6 +35,7 @@ describe('App', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: NotesService, useValue: notesServiceMock },
+        { provide: ScansService, useValue: scansServiceMock },
         { provide: TodosService, useValue: todosServiceMock },
       ],
     }).compileComponents();

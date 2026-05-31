@@ -31,6 +31,13 @@ export const routes: Routes = [
         component: NotesBoardComponent,
       },
       {
+        path: 'scanner',
+        loadComponent: () =>
+          import('./scanner/scanner-board.component').then(
+            (component) => component.ScannerBoardComponent,
+          ),
+      },
+      {
         path: 'coming-soon',
         component: ComingSoonComponent,
       },
