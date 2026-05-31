@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { AuthPageComponent } from './auth/auth-page.component';
 import { authGuard, guestGuard } from './core/auth.guard';
 import { ComingSoonComponent } from './features/coming-soon.component';
+import { NotesBoardComponent } from './notes/notes-board.component';
 import { AppShellComponent } from './shell/app-shell.component';
 import { TodoBoardComponent } from './todos/todo-board.component';
 
@@ -24,6 +25,10 @@ export const routes: Routes = [
       {
         path: 'todos',
         component: TodoBoardComponent,
+      },
+      {
+        path: 'notes',
+        component: NotesBoardComponent,
       },
       {
         path: 'coming-soon',

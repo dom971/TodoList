@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, effect, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { AuthService } from './core/auth.service';
+import { NotesService } from './notes/notes.service';
 import { TodosService } from './todos/todos.service';
 
 @Component({
@@ -12,6 +13,7 @@ import { TodosService } from './todos/todos.service';
 })
 export class App implements OnInit, OnDestroy {
   protected readonly auth = inject(AuthService);
+  private readonly notesService = inject(NotesService);
   private readonly todosService = inject(TodosService);
 
   constructor() {
@@ -24,10 +26,12 @@ export class App implements OnInit, OnDestroy {
 
       if (!session) {
         this.todosService.clear();
+        this.notesService.clear();
         return;
       }
 
       void this.todosService.loadTodos(session.user.id);
+      void this.notesService.loadNotes(session.user.id);
     });
   }
 

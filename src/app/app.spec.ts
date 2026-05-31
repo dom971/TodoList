@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { App } from './app';
 import { AuthService } from './core/auth.service';
+import { NotesService } from './notes/notes.service';
 import { TodosService } from './todos/todos.service';
 
 describe('App', () => {
@@ -17,6 +18,10 @@ describe('App', () => {
     clear: () => undefined,
     loadTodos: () => Promise.resolve(),
   };
+  const notesServiceMock = {
+    clear: () => undefined,
+    loadNotes: () => Promise.resolve(),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -24,6 +29,7 @@ describe('App', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
+        { provide: NotesService, useValue: notesServiceMock },
         { provide: TodosService, useValue: todosServiceMock },
       ],
     }).compileComponents();

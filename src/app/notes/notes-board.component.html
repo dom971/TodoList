@@ -1,0 +1,115 @@
+<header class="notes-header">
+  <div>
+    <p class="eyebrow">Module notes</p>
+    <h1 id="notes-title">Mes notes</h1>
+    <p class="muted-text">Capture tes idées, brouillons et informations rapides.</p>
+  </div>
+
+  <div class="notes-count" aria-label="Résumé des notes">
+    <span><strong>{{ noteCount() }}</strong> note(s)</span>
+  </div>
+</header>
+
+@if (notesService.errorMessage()) {
+  <p class="error-message" role="alert">{{ notesService.errorMessage() }}</p>
+}
+
+<form class="note-form" (ngSubmit)="addNote()" aria-label="Ajouter une note">
+  <label for="note-title">Titre</label>
+  <input
+    id="note-title"
+    name="noteTitle"
+    type="text"
+    placeholder="Ex : idée de module"
+    [ngModel]="notesService.title()"
+    (ngModelChange)="notesService.title.set($event)"
+    [disabled]="notesService.isSaving()"
+  />
+
+  <label for="note-content">Contenu</label>
+  <textarea
+    id="note-content"
+    name="noteContent"
+    rows="4"
+    placeholder="Écris ta note..."
+    [ngModel]="notesService.content()"
+    (ngModelChange)="notesService.content.set($event)"
+    [disabled]="notesService.isSaving()"
+  ></textarea>
+
+  <button type="submit" [disabled]="notesService.isSaving()">
+    {{ notesService.isSaving() ? 'Ajout...' : 'Ajouter la note' }}
+  </button>
+</form>
+
+<ul class="notes-list" aria-label="Liste des notes">
+  @if (notesService.isLoading()) {
+    <li class="empty-state">
+      <strong>Chargement des notes...</strong>
+      <span>Connexion à Supabase en cours.</span>
+    </li>
+  } @else {
+    @for (note of notesService.notes(); track note.id) {
+      <li class="note-item">
+        @if (notesService.editingNoteId() === note.id) {
+          <form class="edit-form" (ngSubmit)="saveNote(note)">
+            <input
+              name="editingTitle"
+              type="text"
+              [ngModel]="notesService.editingTitle()"
+              (ngModelChange)="notesService.editingTitle.set($event)"
+              [attr.aria-label]="'Modifier le titre ' + note.title"
+            />
+            <textarea
+              name="editingContent"
+              rows="4"
+              [ngModel]="notesService.editingContent()"
+              (ngModelChange)="notesService.editingContent.set($event)"
+              [attr.aria-label]="'Modifier le contenu ' + note.title"
+            ></textarea>
+
+            <div class="note-actions">
+              <button class="save-button" type="submit">Enregistrer</button>
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="notesService.cancelEdit()"
+              >
+                Annuler
+              </button>
+            </div>
+          </form>
+        } @else {
+          <article>
+            <h2>{{ note.title }}</h2>
+            <p>{{ note.content || 'Aucun contenu.' }}</p>
+          </article>
+
+          <div class="note-actions">
+            <button
+              class="secondary-button"
+              type="button"
+              (click)="notesService.startEdit(note)"
+              [attr.aria-label]="'Modifier ' + note.title"
+            >
+              Modifier
+            </button>
+            <button
+              class="delete-button"
+              type="button"
+              (click)="deleteNote(note.id)"
+              [attr.aria-label]="'Supprimer ' + note.title"
+            >
+              Supprimer
+            </button>
+          </div>
+        }
+      </li>
+    } @empty {
+      <li class="empty-state">
+        <strong>Aucune note pour le moment.</strong>
+        <span>Ajoute une première note pour démarrer.</span>
+      </li>
+    }
+  }
+</ul>
