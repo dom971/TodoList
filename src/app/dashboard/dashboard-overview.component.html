@@ -1,0 +1,55 @@
+<header class="dashboard-header">
+  <p class="eyebrow">Vue d’ensemble</p>
+  <h1 id="dashboard-title">Dashboard</h1>
+  <p>Retrouve rapidement l’état de tes modules et reprends là où tu t’étais arrêté.</p>
+</header>
+
+<section class="metric-grid" aria-label="Résumé des modules">
+  <article class="metric-card">
+    <span>Tâches à faire</span>
+    <strong>{{ remainingTodos() }}</strong>
+    <small>{{ completedTodos() }} terminée(s)</small>
+    <a routerLink="/app/todos">Ouvrir les tâches</a>
+  </article>
+
+  <article class="metric-card">
+    <span>Notes</span>
+    <strong>{{ notesCount() }}</strong>
+    <small>Notes enregistrées</small>
+    <a routerLink="/app/notes">Ouvrir les notes</a>
+  </article>
+
+  <article class="metric-card">
+    <span>Scans</span>
+    <strong>{{ scansCount() }}</strong>
+    <small>Derniers scans sauvegardés</small>
+    <a routerLink="/app/scanner">Ouvrir le scanner</a>
+  </article>
+</section>
+
+<section class="quick-actions" aria-labelledby="quick-actions-title">
+  <h2 id="quick-actions-title">Accès rapides</h2>
+  <div>
+    <a routerLink="/app/todos">Ajouter une tâche</a>
+    <a routerLink="/app/notes">Écrire une note</a>
+    <a routerLink="/app/scanner">Scanner un code</a>
+  </div>
+</section>
+
+<section class="recent-panel" aria-labelledby="recent-scans-title">
+  <h2 id="recent-scans-title">Derniers scans</h2>
+
+  <ul>
+    @for (scan of latestScans(); track scan.id) {
+      <li>
+        <strong>{{ scan.label || scan.format || 'Scan' }}</strong>
+        <span>{{ scan.value }}</span>
+      </li>
+    } @empty {
+      <li class="empty-state">
+        <strong>Aucun scan récent.</strong>
+        <span>Utilise le scanner pour alimenter cet historique.</span>
+      </li>
+    }
+  </ul>
+</section>

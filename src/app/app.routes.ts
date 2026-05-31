@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { AuthPageComponent } from './auth/auth-page.component';
 import { authGuard, guestGuard } from './core/auth.guard';
+import { DashboardOverviewComponent } from './dashboard/dashboard-overview.component';
 import { ComingSoonComponent } from './features/coming-soon.component';
 import { NotesBoardComponent } from './notes/notes-board.component';
 import { AppShellComponent } from './shell/app-shell.component';
@@ -22,6 +23,10 @@ export const routes: Routes = [
     component: AppShellComponent,
     canActivate: [authGuard],
     children: [
+      {
+        path: 'dashboard',
+        component: DashboardOverviewComponent,
+      },
       {
         path: 'todos',
         component: TodoBoardComponent,
@@ -44,17 +49,17 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'todos',
+        redirectTo: 'dashboard',
       },
     ],
   },
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'app/todos',
+    redirectTo: 'app/dashboard',
   },
   {
     path: '**',
-    redirectTo: 'app/todos',
+    redirectTo: 'app/dashboard',
   },
 ];
