@@ -89,7 +89,7 @@ export class AuthService {
     this.statusMessage.set('');
 
     const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin,
+      redirectTo: `${window.location.origin}/auth/reset-password`,
     });
 
     this.isSubmitting.set(false);

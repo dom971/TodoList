@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { AuthPanelComponent } from './auth-panel.component';
+import { AuthService } from '../core/auth.service';
 
 @Component({
   selector: 'app-auth-page',
@@ -45,4 +46,13 @@ import { AuthPanelComponent } from './auth-panel.component';
     }
   `,
 })
-export class AuthPageComponent {}
+export class AuthPageComponent implements OnInit {
+  private readonly auth = inject(AuthService);
+
+  ngOnInit(): void {
+    if (window.location.pathname.includes('/auth/reset-password')) {
+      this.auth.switchMode('update-password');
+      this.auth.statusMessage.set('Choisis ton nouveau mot de passe.');
+    }
+  }
+}

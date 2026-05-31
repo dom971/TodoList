@@ -13,6 +13,10 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    path: 'auth/reset-password',
+    component: AuthPageComponent,
+  },
+  {
     path: 'app',
     component: AppShellComponent,
     canActivate: [authGuard],
