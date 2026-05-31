@@ -1,24 +1,28 @@
 import { TestBed } from '@angular/core/testing';
+
 import { App } from './app';
-import { SupabaseService } from './core/supabase.service';
+import { AuthService } from './core/auth.service';
+import { TodosService } from './todos/todos.service';
 
 describe('App', () => {
-  const supabaseMock = {
-    from: () => ({
-      select: () => ({
-        order: () => Promise.resolve({ data: [], error: null }),
-      }),
-    }),
+  const authServiceMock = {
+    session: () => null,
+    isLoading: () => false,
+    initialize: () => Promise.resolve(),
+    destroy: () => undefined,
+  };
+
+  const todosServiceMock = {
+    clear: () => undefined,
+    loadTodos: () => Promise.resolve(),
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
-        {
-          provide: SupabaseService,
-          useValue: { client: supabaseMock },
-        },
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: TodosService, useValue: todosServiceMock },
       ],
     }).compileComponents();
   });
@@ -29,12 +33,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the todo application', async () => {
+  it('should render the authentication panel when signed out', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Mes taches');
-    expect(compiled.textContent).toContain('Aucune tache pour le moment.');
+
+    expect(compiled.querySelector('h1')?.textContent).toContain('Connexion');
   });
 });

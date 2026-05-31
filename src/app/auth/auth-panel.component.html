@@ -1,0 +1,72 @@
+<p class="eyebrow">Todo List</p>
+<h1 id="auth-title">
+  {{ auth.mode() === 'sign-in' ? 'Connexion' : 'Inscription' }}
+</h1>
+<p class="auth-copy">Connecte-toi pour retrouver tes taches sur tous tes appareils.</p>
+
+<div class="auth-tabs" aria-label="Mode authentification">
+  <button
+    type="button"
+    [class.is-active]="auth.mode() === 'sign-in'"
+    (click)="auth.switchMode('sign-in')"
+  >
+    Connexion
+  </button>
+  <button
+    type="button"
+    [class.is-active]="auth.mode() === 'sign-up'"
+    (click)="auth.switchMode('sign-up')"
+  >
+    Inscription
+  </button>
+</div>
+
+@if (auth.errorMessage()) {
+  <p class="error-message" role="alert">{{ auth.errorMessage() }}</p>
+}
+
+@if (auth.statusMessage()) {
+  <p class="success-message" role="status">{{ auth.statusMessage() }}</p>
+}
+
+<form class="auth-form" (ngSubmit)="submit()" aria-label="Authentification">
+  <label for="auth-email">Email</label>
+  <input
+    id="auth-email"
+    name="email"
+    type="email"
+    autocomplete="email"
+    [ngModel]="auth.email()"
+    (ngModelChange)="auth.email.set($event)"
+    [disabled]="auth.isSubmitting()"
+  />
+
+  <label for="auth-password">Mot de passe</label>
+  <input
+    id="auth-password"
+    name="password"
+    type="password"
+    autocomplete="current-password"
+    [ngModel]="auth.password()"
+    (ngModelChange)="auth.password.set($event)"
+    [disabled]="auth.isSubmitting()"
+  />
+
+  <button type="submit" [disabled]="auth.isSubmitting()">
+    {{
+      auth.isSubmitting()
+        ? 'Veuillez patienter...'
+        : auth.mode() === 'sign-in'
+          ? 'Se connecter'
+          : 'Creer le compte'
+    }}
+  </button>
+</form>
+
+<p class="auth-hint">
+  {{
+    auth.mode() === 'sign-in'
+      ? 'Pas encore de compte ? Passe sur inscription.'
+      : 'Apres inscription, confirme ton email avant la premiere connexion.'
+  }}
+</p>

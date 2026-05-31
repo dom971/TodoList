@@ -1,0 +1,108 @@
+<header class="todo-header">
+  <div>
+    <p class="eyebrow">Todo List</p>
+    <h1 id="todo-title">Mes taches</h1>
+    <p class="user-email">{{ userEmail() }}</p>
+  </div>
+
+  <div class="header-side">
+    <div class="todo-stats" aria-label="Resume des taches">
+      <span><strong>{{ remainingCount() }}</strong> a faire</span>
+      <span><strong>{{ completedCount() }}</strong> terminee(s)</span>
+    </div>
+    <button class="secondary-button" type="button" (click)="auth.signOut()">
+      Deconnexion
+    </button>
+  </div>
+</header>
+
+@if (todosService.errorMessage()) {
+  <p class="error-message" role="alert">{{ todosService.errorMessage() }}</p>
+}
+
+<form class="todo-form" (ngSubmit)="addTodo()" aria-label="Ajouter une tache">
+  <label for="new-todo">Ajouter une tache</label>
+  <div class="todo-form-row">
+    <input
+      id="new-todo"
+      name="newTodo"
+      type="text"
+      placeholder="Ex: preparer la structure du projet"
+      [ngModel]="todosService.newTodoTitle()"
+      (ngModelChange)="todosService.newTodoTitle.set($event)"
+      autocomplete="off"
+      [disabled]="todosService.isSaving()"
+    />
+    <button type="submit" [disabled]="todosService.isSaving()">
+      {{ todosService.isSaving() ? 'Ajout...' : 'Ajouter' }}
+    </button>
+  </div>
+</form>
+
+<ul class="todo-list" aria-label="Liste des taches">
+  @if (todosService.isLoading()) {
+    <li class="empty-state">
+      <strong>Chargement des taches...</strong>
+      <span>Connexion a Supabase en cours.</span>
+    </li>
+  } @else {
+    @for (todo of todosService.todos(); track todo.id) {
+      <li class="todo-item" [class.is-completed]="todo.completed">
+        @if (todosService.editingTodoId() === todo.id) {
+          <form class="edit-form" (ngSubmit)="saveTodoTitle(todo)">
+            <input
+              name="editingTodo"
+              type="text"
+              [ngModel]="todosService.editingTodoTitle()"
+              (ngModelChange)="todosService.editingTodoTitle.set($event)"
+              [attr.aria-label]="'Modifier ' + todo.title"
+            />
+            <div class="todo-actions">
+              <button class="save-button" type="submit">Enregistrer</button>
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="todosService.cancelEdit()"
+              >
+                Annuler
+              </button>
+            </div>
+          </form>
+        } @else {
+          <label class="todo-check" [attr.aria-label]="'Basculer ' + todo.title">
+            <input
+              type="checkbox"
+              [checked]="todo.completed"
+              (change)="toggleTodo(todo)"
+            />
+            <span>{{ todo.title }}</span>
+          </label>
+
+          <div class="todo-actions">
+            <button
+              class="secondary-button"
+              type="button"
+              (click)="todosService.startEdit(todo)"
+              [attr.aria-label]="'Modifier ' + todo.title"
+            >
+              Modifier
+            </button>
+            <button
+              class="delete-button"
+              type="button"
+              (click)="deleteTodo(todo.id)"
+              [attr.aria-label]="'Supprimer ' + todo.title"
+            >
+              Supprimer
+            </button>
+          </div>
+        }
+      </li>
+    } @empty {
+      <li class="empty-state">
+        <strong>Aucune tache pour le moment.</strong>
+        <span>Ajoute ta premiere tache pour demarrer.</span>
+      </li>
+    }
+  }
+</ul>
