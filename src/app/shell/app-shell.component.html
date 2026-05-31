@@ -10,6 +10,10 @@
         <a routerLink="/app/todos" routerLinkActive="is-active">Taches</a>
         <a routerLink="/app/coming-soon" routerLinkActive="is-active">A venir</a>
       </nav>
+
+      <button class="sign-out-button" type="button" (click)="auth.signOut()">
+        Deconnexion
+      </button>
     </aside>
 
     <section class="app-content">
