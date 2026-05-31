@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
 
@@ -21,6 +21,16 @@ export class ScannerBoardComponent implements OnDestroy {
   protected readonly scannedValue = signal('');
   protected readonly scannedFormat = signal('');
   protected readonly cameraMessage = signal('');
+  protected readonly actionMessage = signal('');
+  protected readonly hasSavedCurrentScan = signal(false);
+  protected readonly isScannedValueUrl = computed(() => {
+    try {
+      const url = new URL(this.scannedValue());
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  });
 
   private readonly reader = new BrowserMultiFormatReader();
   private scannerControls?: IScannerControls;
@@ -37,8 +47,10 @@ export class ScannerBoardComponent implements OnDestroy {
     }
 
     this.cameraMessage.set('');
+    this.actionMessage.set('');
     this.scannedValue.set('');
     this.scannedFormat.set('');
+    this.hasSavedCurrentScan.set(false);
     this.isScanning.set(true);
 
     try {
@@ -74,15 +86,46 @@ export class ScannerBoardComponent implements OnDestroy {
     this.isScanning.set(false);
   }
 
+  protected scanAgain(): void {
+    this.scannedValue.set('');
+    this.scannedFormat.set('');
+    this.actionMessage.set('');
+    this.hasSavedCurrentScan.set(false);
+    this.scansService.label.set('');
+  }
+
+  protected async copyScannedValue(): Promise<void> {
+    const value = this.scannedValue();
+
+    if (!value) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(value);
+    this.actionMessage.set('Résultat copié.');
+  }
+
+  protected openScannedUrl(): void {
+    const value = this.scannedValue();
+
+    if (!this.isScannedValueUrl()) {
+      return;
+    }
+
+    window.open(value, '_blank', 'noopener,noreferrer');
+  }
+
   protected async saveCurrentScan(): Promise<void> {
     const userId = this.auth.session()?.user.id;
     const value = this.scannedValue();
 
-    if (!userId || !value) {
+    if (!userId || !value || this.hasSavedCurrentScan()) {
       return;
     }
 
     await this.scansService.saveScan(userId, value, this.scannedFormat());
+    this.hasSavedCurrentScan.set(true);
+    this.actionMessage.set('Scan enregistré.');
   }
 
   protected async deleteScan(id: number): Promise<void> {

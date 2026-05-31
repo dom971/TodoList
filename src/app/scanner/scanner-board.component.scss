@@ -80,13 +80,16 @@ h2 {
 }
 
 .scanner-actions,
+.result-actions,
 .scan-item {
   display: flex;
   gap: 8px;
 }
 
-.scanner-actions {
+.scanner-actions,
+.result-actions {
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .primary-button,
@@ -135,6 +138,16 @@ h2 {
   border-radius: 8px;
   background: #fff7f7;
   color: #b91c1c;
+  font-weight: 700;
+}
+
+.success-message {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #166534;
   font-weight: 700;
 }
 
@@ -232,6 +245,7 @@ input:focus {
 
 @media (max-width: 640px) {
   .scanner-actions,
+  .result-actions,
   .scan-item {
     display: grid;
     grid-template-columns: 1fr;

@@ -40,6 +40,10 @@
 <section class="result-panel" aria-labelledby="result-title">
   <h2 id="result-title">Résultat</h2>
 
+  @if (actionMessage()) {
+    <p class="success-message" role="status">{{ actionMessage() }}</p>
+  }
+
   @if (scannedValue()) {
     <dl>
       <div>
@@ -51,6 +55,20 @@
         <dd>{{ scannedValue() }}</dd>
       </div>
     </dl>
+
+    <div class="result-actions">
+      <button class="secondary-button" type="button" (click)="copyScannedValue()">
+        Copier
+      </button>
+      @if (isScannedValueUrl()) {
+        <button class="secondary-button" type="button" (click)="openScannedUrl()">
+          Ouvrir le lien
+        </button>
+      }
+      <button class="secondary-button" type="button" (click)="scanAgain()">
+        Scanner à nouveau
+      </button>
+    </div>
 
     <label for="scan-label">Libellé</label>
     <input
@@ -66,9 +84,15 @@
       class="primary-button"
       type="button"
       (click)="saveCurrentScan()"
-      [disabled]="scansService.isSaving()"
+      [disabled]="scansService.isSaving() || hasSavedCurrentScan()"
     >
-      {{ scansService.isSaving() ? 'Enregistrement...' : 'Enregistrer le scan' }}
+      {{
+        scansService.isSaving()
+          ? 'Enregistrement...'
+          : hasSavedCurrentScan()
+            ? 'Scan enregistré'
+            : 'Enregistrer le scan'
+      }}
     </button>
   } @else {
     <p class="empty-copy">Aucun code scanné pour le moment.</p>
