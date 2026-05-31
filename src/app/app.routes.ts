@@ -1,3 +1,44 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { AuthPageComponent } from './auth/auth-page.component';
+import { authGuard, guestGuard } from './core/auth.guard';
+import { ComingSoonComponent } from './features/coming-soon.component';
+import { AppShellComponent } from './shell/app-shell.component';
+import { TodoBoardComponent } from './todos/todo-board.component';
+
+export const routes: Routes = [
+  {
+    path: 'auth',
+    component: AuthPageComponent,
+    canActivate: [guestGuard],
+  },
+  {
+    path: 'app',
+    component: AppShellComponent,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'todos',
+        component: TodoBoardComponent,
+      },
+      {
+        path: 'coming-soon',
+        component: ComingSoonComponent,
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'todos',
+      },
+    ],
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'app/todos',
+  },
+  {
+    path: '**',
+    redirectTo: 'app/todos',
+  },
+];

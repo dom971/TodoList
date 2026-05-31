@@ -1,3 +1,4 @@
+import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 
 import { App } from './app';
@@ -21,6 +22,7 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: TodosService, useValue: todosServiceMock },
       ],
@@ -33,13 +35,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render the authentication panel when signed out', async () => {
+  it('should render a router outlet', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('Personal Hub');
-    expect(compiled.querySelector('h1')?.textContent).toContain('Connexion');
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

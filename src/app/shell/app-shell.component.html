@@ -1,0 +1,19 @@
+<main class="app-page">
+  <section class="app-shell" aria-label="Espace personnel">
+    <aside class="app-sidebar" aria-label="Navigation">
+      <div>
+        <p class="eyebrow">Personal Hub</p>
+        <h1>Workspace</h1>
+      </div>
+
+      <nav class="app-nav">
+        <a routerLink="/app/todos" routerLinkActive="is-active">Taches</a>
+        <a routerLink="/app/coming-soon" routerLinkActive="is-active">A venir</a>
+      </nav>
+    </aside>
+
+    <section class="app-content">
+      <router-outlet />
+    </section>
+  </section>
+</main>

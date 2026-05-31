@@ -11,6 +11,7 @@ export type AuthMode = 'sign-in' | 'sign-up' | 'reset-password' | 'update-passwo
 export class AuthService {
   private readonly supabase = inject(SupabaseService).client;
   private authSubscription?: { unsubscribe: () => void };
+  private initializePromise?: Promise<void>;
 
   readonly session = signal<Session | null>(null);
   readonly email = signal('');
@@ -23,6 +24,15 @@ export class AuthService {
   readonly statusMessage = signal('');
 
   async initialize(): Promise<void> {
+    if (this.initializePromise) {
+      return this.initializePromise;
+    }
+
+    this.initializePromise = this.initializeSession();
+    return this.initializePromise;
+  }
+
+  private async initializeSession(): Promise<void> {
     const { data, error } = await this.supabase.auth.getSession();
 
     if (error) {

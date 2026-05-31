@@ -1,20 +1,17 @@
 import { Component, OnDestroy, OnInit, effect, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
-import { AuthPanelComponent } from './auth/auth-panel.component';
-import { AppNavigationService } from './core/app-navigation.service';
 import { AuthService } from './core/auth.service';
-import { TodoBoardComponent } from './todos/todo-board.component';
 import { TodosService } from './todos/todos.service';
 
 @Component({
   selector: 'app-root',
-  imports: [AuthPanelComponent, TodoBoardComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App implements OnInit, OnDestroy {
   protected readonly auth = inject(AuthService);
-  protected readonly navigation = inject(AppNavigationService);
   private readonly todosService = inject(TodosService);
 
   constructor() {
