@@ -389,3 +389,30 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+@media (min-width: 641px) and (max-width: 980px) {
+  .todo-header {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .header-side {
+    justify-items: start;
+  }
+
+  .todo-stats {
+    justify-content: flex-start;
+  }
+
+  .profile-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-item {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-actions {
+    justify-content: flex-start;
+  }
+}
