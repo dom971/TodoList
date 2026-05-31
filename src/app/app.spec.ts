@@ -39,6 +39,7 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
 
+    expect(compiled.textContent).toContain('Personal Hub');
     expect(compiled.querySelector('h1')?.textContent).toContain('Connexion');
   });
 });
