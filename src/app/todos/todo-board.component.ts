@@ -39,11 +39,11 @@ export class TodoBoardComponent {
   protected readonly emptyTitle = computed(() => {
     switch (this.todosService.filter()) {
       case 'active':
-        return 'Aucune tache a faire.';
+        return 'Aucune tâche à faire.';
       case 'completed':
-        return 'Aucune tache terminee.';
+        return 'Aucune tâche terminée.';
       default:
-        return 'Aucune tache pour le moment.';
+        return 'Aucune tâche pour le moment.';
     }
   });
 

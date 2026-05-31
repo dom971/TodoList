@@ -1,14 +1,14 @@
 <header class="todo-header">
   <div>
-    <p class="eyebrow">Module taches</p>
-    <h1 id="todo-title">Mes taches</h1>
+    <p class="eyebrow">Module tâches</p>
+    <h1 id="todo-title">Mes tâches</h1>
     <p class="user-email">{{ userEmail() }}</p>
   </div>
 
   <div class="header-side">
-    <div class="todo-stats" aria-label="Resume des taches">
-      <span><strong>{{ remainingCount() }}</strong> a faire</span>
-      <span><strong>{{ completedCount() }}</strong> terminee(s)</span>
+    <div class="todo-stats" aria-label="Résumé des tâches">
+      <span><strong>{{ remainingCount() }}</strong> à faire</span>
+      <span><strong>{{ completedCount() }}</strong> terminée(s)</span>
     </div>
   </div>
 </header>
@@ -28,14 +28,14 @@
   <p class="error-message" role="alert">{{ todosService.errorMessage() }}</p>
 }
 
-<form class="todo-form" (ngSubmit)="addTodo()" aria-label="Ajouter une tache">
-  <label for="new-todo">Ajouter une tache</label>
+<form class="todo-form" (ngSubmit)="addTodo()" aria-label="Ajouter une tâche">
+  <label for="new-todo">Ajouter une tâche</label>
   <div class="todo-form-row">
     <input
       id="new-todo"
       name="newTodo"
       type="text"
-      placeholder="Ex: preparer la structure du projet"
+      placeholder="Ex : préparer la structure du projet"
       [ngModel]="todosService.newTodoTitle()"
       (ngModelChange)="todosService.newTodoTitle.set($event)"
       autocomplete="off"
@@ -47,7 +47,7 @@
   </div>
 </form>
 
-<div class="filter-tabs" aria-label="Filtrer les taches">
+<div class="filter-tabs" aria-label="Filtrer les tâches">
   <button
     type="button"
     [class.is-active]="todosService.filter() === 'all'"
@@ -60,22 +60,22 @@
     [class.is-active]="todosService.filter() === 'active'"
     (click)="todosService.filter.set('active')"
   >
-    A faire
+    À faire
   </button>
   <button
     type="button"
     [class.is-active]="todosService.filter() === 'completed'"
     (click)="todosService.filter.set('completed')"
   >
-    Termine(es)
+    Terminée(s)
   </button>
 </div>
 
-<ul class="todo-list" aria-label="Liste des taches">
+<ul class="todo-list" aria-label="Liste des tâches">
   @if (todosService.isLoading()) {
     <li class="empty-state">
-      <strong>Chargement des taches...</strong>
-      <span>Connexion a Supabase en cours.</span>
+      <strong>Chargement des tâches...</strong>
+      <span>Connexion à Supabase en cours.</span>
     </li>
   } @else {
     @for (todo of filteredTodos(); track todo.id) {
@@ -133,7 +133,7 @@
     } @empty {
       <li class="empty-state">
         <strong>{{ emptyTitle() }}</strong>
-        <span>Change de filtre ou ajoute une nouvelle tache.</span>
+        <span>Change de filtre ou ajoute une nouvelle tâche.</span>
       </li>
     }
   }

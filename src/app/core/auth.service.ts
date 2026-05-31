@@ -99,14 +99,14 @@ export class AuthService {
       return;
     }
 
-    this.statusMessage.set('Email envoye. Ouvre le lien recu pour choisir un nouveau mot de passe.');
+    this.statusMessage.set('Email envoyé. Ouvre le lien reçu pour choisir un nouveau mot de passe.');
   }
 
   async updatePassword(): Promise<void> {
     const password = this.newPassword();
 
     if (password.length < 6) {
-      this.errorMessage.set('Choisis un mot de passe de 6 caracteres minimum.');
+      this.errorMessage.set('Choisis un mot de passe de 6 caractères minimum.');
       return;
     }
 
@@ -125,7 +125,7 @@ export class AuthService {
 
     this.newPassword.set('');
     this.mode.set('sign-in');
-    this.statusMessage.set('Mot de passe mis a jour. Tu peux te connecter.');
+    this.statusMessage.set('Mot de passe mis à jour. Tu peux te connecter.');
   }
 
   private async submit(mode: AuthMode): Promise<void> {
@@ -154,7 +154,7 @@ export class AuthService {
     }
 
     if (mode === 'sign-up') {
-      this.statusMessage.set('Compte cree. Verifie tes emails pour confirmer ton inscription.');
+      this.statusMessage.set('Compte créé. Vérifie tes emails pour confirmer ton inscription.');
     }
   }
 

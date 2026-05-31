@@ -5,9 +5,9 @@ import { Component } from '@angular/core';
   template: `
     <section class="coming-soon" aria-labelledby="coming-soon-title">
       <p class="eyebrow">Roadmap</p>
-      <h2 id="coming-soon-title">Prochaines fonctionnalites</h2>
+      <h2 id="coming-soon-title">Prochaines fonctionnalités</h2>
       <p>
-        Cet espace est pret pour accueillir d'autres modules : notes, profil,
+        Cet espace est prêt pour accueillir d'autres modules : notes, profil,
         dashboard ou suivi personnel.
       </p>
     </section>

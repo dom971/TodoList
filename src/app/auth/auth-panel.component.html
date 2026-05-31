@@ -8,7 +8,7 @@
       Inscription
     }
     @case ('reset-password') {
-      Mot de passe oublie
+      Mot de passe oublié
     }
     @case ('update-password') {
       Nouveau mot de passe
@@ -18,13 +18,13 @@
 <p class="auth-copy">
   @switch (auth.mode()) {
     @case ('reset-password') {
-      Entre ton email pour recevoir un lien de reinitialisation.
+      Entre ton email pour recevoir un lien de réinitialisation.
     }
     @case ('update-password') {
-      Saisis un nouveau mot de passe pour terminer la reinitialisation.
+      Saisis un nouveau mot de passe pour terminer la réinitialisation.
     }
     @default {
-      Connecte-toi pour retrouver tes taches sur tous tes appareils.
+      Connecte-toi pour retrouver tes tâches sur tous tes appareils.
     }
   }
 </p>
@@ -103,23 +103,23 @@
         : auth.mode() === 'sign-in'
           ? 'Se connecter'
           : auth.mode() === 'sign-up'
-            ? 'Creer le compte'
+            ? 'Créer le compte'
             : auth.mode() === 'reset-password'
               ? 'Envoyer le lien'
-              : 'Mettre a jour'
+              : 'Mettre à jour'
     }}
   </button>
 </form>
 
 @if (auth.mode() === 'sign-in') {
   <button class="link-button" type="button" (click)="auth.switchMode('reset-password')">
-    Mot de passe oublie ?
+    Mot de passe oublié ?
   </button>
 }
 
 @if (auth.mode() === 'reset-password' || auth.mode() === 'update-password') {
   <button class="link-button" type="button" (click)="auth.switchMode('sign-in')">
-    Retour a la connexion
+    Retour à la connexion
   </button>
 }
 
@@ -128,7 +128,7 @@
     auth.mode() === 'sign-in'
       ? 'Pas encore de compte ? Passe sur inscription.'
       : auth.mode() === 'sign-up'
-        ? 'Apres inscription, confirme ton email avant la premiere connexion.'
-        : 'Le lien de reinitialisation respecte les URLs autorisees dans Supabase.'
+        ? 'Après inscription, confirme ton email avant la première connexion.'
+        : 'Le lien de réinitialisation respecte les URLs autorisées dans Supabase.'
   }}
 </p>
