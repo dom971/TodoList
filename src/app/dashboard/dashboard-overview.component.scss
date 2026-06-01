@@ -3,14 +3,14 @@
 
   p:last-child {
     margin: 10px 0 0;
-    color: #64748b;
+    color: var(--app-text-muted);
     line-height: 1.5;
   }
 }
 
 .eyebrow {
   margin: 0 0 8px;
-  color: #2563eb;
+  color: var(--app-primary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -24,13 +24,13 @@ p {
 }
 
 h1 {
-  color: #111827;
+  color: var(--app-text);
   font-size: clamp(2rem, 6vw, 3.25rem);
   line-height: 1;
 }
 
 h2 {
-  color: #111827;
+  color: var(--app-text);
   font-size: 1.1rem;
 }
 
@@ -44,9 +44,9 @@ h2 {
 .metric-card,
 .quick-actions,
 .recent-panel {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--app-surface);
 }
 
 .metric-card {
@@ -56,18 +56,18 @@ h2 {
 
   span,
   small {
-    color: #64748b;
+    color: var(--app-text-muted);
     font-weight: 700;
   }
 
   strong {
-    color: #111827;
+    color: var(--app-text);
     font-size: 2.2rem;
     line-height: 1;
   }
 
   a {
-    color: #2563eb;
+    color: var(--app-primary);
     font-weight: 800;
     text-decoration: none;
   }
@@ -91,19 +91,19 @@ h2 {
   display: grid;
   min-height: 42px;
   place-items: center;
-  border: 1px solid #dbe3ef;
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  background: #f8fafc;
-  color: #334155;
+  background: var(--app-surface-muted);
+  color: var(--app-text-soft);
   font-weight: 800;
   text-align: center;
   text-decoration: none;
 }
 
 .quick-actions a:hover {
-  border-color: #93c5fd;
-  background: #eff6ff;
-  color: #1d4ed8;
+  border-color: var(--app-primary);
+  background: var(--app-primary-soft);
+  color: var(--app-primary-strong);
 }
 
 .recent-panel ul {
@@ -118,17 +118,17 @@ h2 {
   display: grid;
   gap: 4px;
   padding: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--app-surface);
 }
 
 .recent-panel strong {
-  color: #111827;
+  color: var(--app-text);
 }
 
 .recent-panel span {
-  color: #64748b;
+  color: var(--app-text-muted);
   overflow-wrap: anywhere;
 }
 

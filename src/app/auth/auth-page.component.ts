@@ -20,18 +20,18 @@ import { AuthService } from '../core/auth.service';
       place-items: center;
       padding: 32px 16px;
       background:
-        linear-gradient(135deg, rgba(37, 99, 235, 0.13), transparent 32%),
-        linear-gradient(315deg, rgba(20, 184, 166, 0.15), transparent 34%),
-        #f7f8fb;
+        linear-gradient(135deg, var(--app-bg-accent-a), transparent 32%),
+        linear-gradient(315deg, var(--app-bg-accent-b), transparent 34%),
+        var(--app-bg);
     }
 
     .auth-shell {
       width: min(100%, 520px);
       padding: 28px;
-      border: 1px solid #e4e7ec;
+      border: 1px solid var(--app-border);
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.94);
-      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+      background: var(--app-surface-strong);
+      box-shadow: 0 24px 60px var(--app-shadow);
     }
 
     @media (max-width: 640px) {

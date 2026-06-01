@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../core/auth.service';
+import { ThemeService } from '../core/theme.service';
 
 @Component({
   selector: 'app-shell',
@@ -11,6 +12,7 @@ import { AuthService } from '../core/auth.service';
 })
 export class AppShellComponent {
   protected readonly auth = inject(AuthService);
+  protected readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
 
   protected readonly userEmail = computed(() => this.auth.session()?.user.email ?? '');

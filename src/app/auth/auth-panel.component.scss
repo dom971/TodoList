@@ -1,6 +1,6 @@
 .eyebrow {
   margin: 0 0 8px;
-  color: #2563eb;
+  color: var(--app-primary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -9,14 +9,14 @@
 
 h1 {
   margin: 0;
-  color: #111827;
+  color: var(--app-text);
   font-size: clamp(2rem, 6vw, 3.25rem);
   line-height: 1;
 }
 
 .auth-copy {
   margin: 14px 0 24px;
-  color: #64748b;
+  color: var(--app-text-muted);
   line-height: 1.6;
 }
 
@@ -26,25 +26,25 @@ h1 {
   gap: 4px;
   margin-bottom: 22px;
   padding: 4px;
-  border: 1px solid #dbe3ef;
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  background: #f8fafc;
+  background: var(--app-surface-muted);
 
   button {
     height: 38px;
     border: 0;
     border-radius: 6px;
     background: transparent;
-    color: #475569;
+    color: var(--app-text-muted);
     cursor: pointer;
     font: inherit;
     font-weight: 800;
   }
 
   button.is-active {
-    background: #ffffff;
-    color: #111827;
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+    background: var(--app-surface);
+    color: var(--app-text);
+    box-shadow: 0 1px 4px var(--app-shadow);
   }
 }
 
@@ -53,7 +53,7 @@ h1 {
   gap: 10px;
 
   label {
-    color: #475569;
+    color: var(--app-text-muted);
     font-size: 0.9rem;
     font-weight: 700;
   }
@@ -61,13 +61,13 @@ h1 {
   input {
     height: 46px;
     padding: 0 14px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--app-border-strong);
     border-radius: 8px;
-    color: #111827;
+    color: var(--app-text);
   }
 
   input:focus {
-    border-color: #2563eb;
+    border-color: var(--app-primary);
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
     outline: none;
   }
@@ -77,19 +77,19 @@ h1 {
     margin-top: 8px;
     border: 0;
     border-radius: 8px;
-    background: #2563eb;
-    color: #ffffff;
+    background: var(--app-primary);
+    color: var(--app-on-primary);
     cursor: pointer;
     font: inherit;
     font-weight: 800;
   }
 
   button:hover {
-    background: #1d4ed8;
+    background: var(--app-primary-strong);
   }
 
   button:disabled {
-    background: #94a3b8;
+    background: var(--app-border-strong);
     cursor: not-allowed;
   }
 }
@@ -103,15 +103,15 @@ h1 {
 }
 
 .error-message {
-  border: 1px solid #fecaca;
-  background: #fff7f7;
-  color: #b91c1c;
+  border: 1px solid var(--app-danger-border);
+  background: var(--app-danger-bg);
+  color: var(--app-danger);
 }
 
 .success-message {
-  border: 1px solid #bbf7d0;
-  background: #f0fdf4;
-  color: #166534;
+  border: 1px solid var(--app-success-border);
+  background: var(--app-success-bg);
+  color: var(--app-success);
 }
 
 .link-button,
@@ -123,18 +123,18 @@ h1 {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #2563eb;
+  color: var(--app-primary);
   cursor: pointer;
   font: inherit;
   font-weight: 800;
 }
 
 .link-button:hover {
-  color: #1d4ed8;
+  color: var(--app-primary-strong);
 }
 
 .auth-hint {
-  color: #64748b;
+  color: var(--app-text-muted);
   font-size: 0.92rem;
   line-height: 1.5;
 }

@@ -14,7 +14,7 @@
 
 .eyebrow {
   margin: 0 0 8px;
-  color: #2563eb;
+  color: var(--app-primary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -23,7 +23,7 @@
 
 h1 {
   margin: 0;
-  color: #111827;
+  color: var(--app-text);
   font-size: clamp(2rem, 6vw, 3.25rem);
   line-height: 1;
 }
@@ -39,17 +39,17 @@ h1 {
     align-items: baseline;
     gap: 5px;
     padding: 8px 10px;
-    border: 1px solid #dbe3ef;
+    border: 1px solid var(--app-border);
     border-radius: 999px;
-    background: #f8fafc;
-    color: #334155;
+    background: var(--app-surface-muted);
+    color: var(--app-text-soft);
     font-size: 0.86rem;
     font-weight: 700;
     white-space: nowrap;
   }
 
   strong {
-    color: #111827;
+    color: var(--app-text);
     font-size: 1rem;
   }
 }
@@ -60,7 +60,7 @@ h1 {
   label {
     display: block;
     margin-bottom: 8px;
-    color: #475569;
+    color: var(--app-text-muted);
     font-size: 0.9rem;
     font-weight: 700;
   }
@@ -75,22 +75,22 @@ h1 {
     min-width: 0;
     height: 46px;
     padding: 0 14px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--app-border-strong);
     border-radius: 8px;
-    background: #ffffff;
-    color: #111827;
+    background: var(--app-surface);
+    color: var(--app-text);
     font: inherit;
   }
 
   input:focus {
-    border-color: #2563eb;
+    border-color: var(--app-primary);
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
     outline: none;
   }
 
   input:disabled {
-    background: #f8fafc;
-    color: #94a3b8;
+    background: var(--app-surface-muted);
+    color: var(--app-border-strong);
   }
 
   button {
@@ -98,19 +98,19 @@ h1 {
     padding: 0 18px;
     border: 0;
     border-radius: 8px;
-    background: #2563eb;
-    color: #ffffff;
+    background: var(--app-primary);
+    color: var(--app-on-primary);
     cursor: pointer;
     font: inherit;
     font-weight: 800;
   }
 
   button:hover {
-    background: #1d4ed8;
+    background: var(--app-primary-strong);
   }
 
   button:disabled {
-    background: #94a3b8;
+    background: var(--app-border-strong);
     cursor: not-allowed;
   }
 }
@@ -118,10 +118,10 @@ h1 {
 .error-message {
   margin: 0 0 18px;
   padding: 12px 14px;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--app-danger-border);
   border-radius: 8px;
-  background: #fff7f7;
-  color: #b91c1c;
+  background: var(--app-danger-bg);
+  color: var(--app-danger);
   font-weight: 700;
 }
 
@@ -131,25 +131,25 @@ h1 {
   gap: 4px;
   margin-bottom: 16px;
   padding: 4px;
-  border: 1px solid #dbe3ef;
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  background: #f8fafc;
+  background: var(--app-surface-muted);
 
   button {
     height: 36px;
     border: 0;
     border-radius: 6px;
     background: transparent;
-    color: #475569;
+    color: var(--app-text-muted);
     cursor: pointer;
     font: inherit;
     font-weight: 800;
   }
 
   button.is-active {
-    background: #ffffff;
-    color: #111827;
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+    background: var(--app-surface);
+    color: var(--app-text);
+    box-shadow: 0 1px 4px var(--app-shadow);
   }
 }
 
@@ -163,9 +163,9 @@ h1 {
 
 .todo-item,
 .empty-state {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--app-surface);
 }
 
 .todo-item {
@@ -181,16 +181,16 @@ h1 {
 }
 
 .todo-item:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  border-color: var(--app-border-strong);
+  box-shadow: 0 8px 20px var(--app-shadow);
   transform: translateY(-1px);
 }
 
 .todo-item.is-completed {
-  background: #f8fafc;
+  background: var(--app-surface-muted);
 
   .todo-check span {
-    color: #64748b;
+    color: var(--app-text-muted);
     text-decoration: line-through;
   }
 }
@@ -212,7 +212,7 @@ h1 {
 
   span {
     overflow-wrap: anywhere;
-    color: #1f2937;
+    color: var(--app-text);
     font-weight: 650;
     line-height: 1.4;
   }
@@ -234,13 +234,13 @@ h1 {
     min-width: 0;
     height: 40px;
     padding: 0 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--app-border-strong);
     border-radius: 8px;
-    color: #111827;
+    color: var(--app-text);
   }
 
   input:focus {
-    border-color: #2563eb;
+    border-color: var(--app-primary);
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
     outline: none;
   }
@@ -259,29 +259,29 @@ h1 {
 }
 
 .secondary-button {
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #334155;
+  border: 1px solid var(--app-border-strong);
+  background: var(--app-surface);
+  color: var(--app-text-soft);
 }
 
 .secondary-button:hover {
-  background: #f8fafc;
+  background: var(--app-surface-muted);
 }
 
 .save-button {
-  border: 1px solid #1d4ed8;
-  background: #2563eb;
-  color: #ffffff;
+  border: 1px solid var(--app-primary-strong);
+  background: var(--app-primary);
+  color: var(--app-on-primary);
 }
 
 .save-button:hover {
-  background: #1d4ed8;
+  background: var(--app-primary-strong);
 }
 
 .delete-button {
-  border: 1px solid #fecaca;
-  background: #fff7f7;
-  color: #b91c1c;
+  border: 1px solid var(--app-danger-border);
+  background: var(--app-danger-bg);
+  color: var(--app-danger);
 }
 
 .delete-button:hover {
@@ -292,11 +292,11 @@ h1 {
   display: grid;
   gap: 6px;
   padding: 24px;
-  color: #64748b;
+  color: var(--app-text-muted);
   text-align: center;
 
   strong {
-    color: #1f2937;
+    color: var(--app-text);
   }
 }
 

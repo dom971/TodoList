@@ -25,6 +25,26 @@
         </div>
       </section>
 
+      <section class="theme-switcher" aria-label="Thème">
+        <span>Thème</span>
+        <div>
+          <button
+            type="button"
+            [class.is-active]="theme.theme() === 'light'"
+            (click)="theme.setTheme('light')"
+          >
+            Clair
+          </button>
+          <button
+            type="button"
+            [class.is-active]="theme.theme() === 'dark'"
+            (click)="theme.setTheme('dark')"
+          >
+            Sombre
+          </button>
+        </div>
+      </section>
+
       <button class="sign-out-button" type="button" (click)="signOut()">
         Déconnexion
       </button>

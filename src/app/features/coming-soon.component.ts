@@ -15,14 +15,14 @@ import { Component } from '@angular/core';
   styles: `
     .coming-soon {
       padding: 20px;
-      border: 1px dashed #cbd5e1;
+      border: 1px dashed var(--app-border-strong);
       border-radius: 8px;
-      background: #f8fafc;
+      background: var(--app-surface-muted);
     }
 
     .eyebrow {
       margin: 0 0 8px;
-      color: #2563eb;
+      color: var(--app-primary);
       font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -31,14 +31,14 @@ import { Component } from '@angular/core';
 
     h2 {
       margin: 0;
-      color: #111827;
+      color: var(--app-text);
       font-size: 1.6rem;
       line-height: 1.2;
     }
 
     p:last-child {
       margin: 12px 0 0;
-      color: #64748b;
+      color: var(--app-text-muted);
       line-height: 1.6;
     }
   `,
