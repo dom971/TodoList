@@ -208,32 +208,37 @@ h1 {
 
   .app-sidebar {
     position: static;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .app-nav {
-    grid-template-columns: repeat(5, minmax(82px, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
 
     a {
       justify-content: center;
+      padding: 0 8px;
+      font-size: 0.92rem;
       text-align: center;
     }
   }
 
   .sign-out-button {
-    grid-column: 1 / -1;
     justify-self: end;
     min-width: 160px;
     text-align: center;
   }
 
   .account-summary {
-    grid-column: 1 / -1;
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .theme-switcher {
-    grid-column: 1 / -1;
+    grid-template-columns: auto minmax(220px, 320px);
+    align-items: center;
+
+    > span {
+      margin: 0;
+    }
   }
 }
