@@ -164,12 +164,7 @@ export class ScannerBoardComponent implements OnDestroy {
       return;
     }
 
-    const text = scans
-      .map((scan, index) => {
-        const label = scan.label || scan.format || `Scan ${index + 1}`;
-        return `${index + 1}. ${label}: ${scan.value}`;
-      })
-      .join('\n');
+    const text = scans.map((scan) => scan.value).join('\n');
 
     if (navigator.share) {
       try {
