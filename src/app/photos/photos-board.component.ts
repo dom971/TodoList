@@ -30,6 +30,10 @@ export class PhotosBoardComponent {
     return this.withUser((userId) => this.photosService.deletePhoto(photo, userId));
   }
 
+  protected savePhotoMetadata(photo: Photo): Promise<void> {
+    return this.withUser((userId) => this.photosService.savePhotoMetadata(photo, userId));
+  }
+
   private async withUser(action: (userId: string) => Promise<void>): Promise<void> {
     const userId = this.auth.session()?.user.id;
 

@@ -16,6 +16,9 @@ export class PhotosService {
   readonly title = signal('');
   readonly description = signal('');
   readonly selectedFileName = signal('');
+  readonly editingPhotoId = signal<number | null>(null);
+  readonly editingTitle = signal('');
+  readonly editingDescription = signal('');
   readonly isLoading = signal(false);
   readonly isUploading = signal(false);
   readonly errorMessage = signal('');
@@ -27,6 +30,7 @@ export class PhotosService {
     this.title.set('');
     this.description.set('');
     this.selectedFileName.set('');
+    this.cancelEdit();
     this.selectedFile = undefined;
     this.isLoading.set(false);
     this.isUploading.set(false);
@@ -132,6 +136,64 @@ export class PhotosService {
 
     await this.supabase.storage.from(PHOTOS_BUCKET).remove([photo.storage_path]);
     this.photos.update((photos) => photos.filter((currentPhoto) => currentPhoto.id !== photo.id));
+  }
+
+  startEdit(photo: Photo): void {
+    this.editingPhotoId.set(photo.id);
+    this.editingTitle.set(photo.title ?? '');
+    this.editingDescription.set(photo.description ?? '');
+    this.errorMessage.set('');
+  }
+
+  cancelEdit(): void {
+    this.editingPhotoId.set(null);
+    this.editingTitle.set('');
+    this.editingDescription.set('');
+  }
+
+  async savePhotoMetadata(photo: Photo, userId: string): Promise<void> {
+    const title = this.editingTitle().trim();
+    const description = this.editingDescription().trim();
+
+    if (!title) {
+      this.errorMessage.set('Le titre de la photo est obligatoire.');
+      return;
+    }
+
+    if (title === (photo.title ?? '') && description === (photo.description ?? '')) {
+      this.cancelEdit();
+      return;
+    }
+
+    this.errorMessage.set('');
+
+    const { data, error } = await this.supabase
+      .from('photos')
+      .update({
+        title,
+        description: description || null,
+      })
+      .eq('id', photo.id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      this.errorMessage.set(error.message);
+      return;
+    }
+
+    this.photos.update((photos) =>
+      photos.map((currentPhoto) =>
+        currentPhoto.id === data.id
+          ? {
+              ...(data as Photo),
+              signedUrl: currentPhoto.signedUrl,
+            }
+          : currentPhoto,
+      ),
+    );
+    this.cancelEdit();
   }
 
   private async withSignedUrls(photos: Photo[]): Promise<Photo[]> {

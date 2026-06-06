@@ -70,21 +70,64 @@
             <div class="missing-image">Image indisponible</div>
           }
 
-          <div class="photo-content">
-            <h3>{{ photo.title || 'Photo sans titre' }}</h3>
-            @if (photo.description) {
-              <p>{{ photo.description }}</p>
-            }
-          </div>
+          @if (photosService.editingPhotoId() === photo.id) {
+            <form class="edit-form" (ngSubmit)="savePhotoMetadata(photo)">
+              <label [for]="'photo-edit-title-' + photo.id">Titre</label>
+              <input
+                [id]="'photo-edit-title-' + photo.id"
+                name="editingPhotoTitle"
+                type="text"
+                [ngModel]="photosService.editingTitle()"
+                (ngModelChange)="photosService.editingTitle.set($event)"
+              />
 
-          <button
-            class="delete-button"
-            type="button"
-            (click)="deletePhoto(photo)"
-            [attr.aria-label]="'Supprimer ' + (photo.title || 'cette photo')"
-          >
-            Supprimer
-          </button>
+              <label [for]="'photo-edit-description-' + photo.id">Description</label>
+              <textarea
+                [id]="'photo-edit-description-' + photo.id"
+                name="editingPhotoDescription"
+                rows="3"
+                [ngModel]="photosService.editingDescription()"
+                (ngModelChange)="photosService.editingDescription.set($event)"
+              ></textarea>
+
+              <div class="photo-actions">
+                <button class="save-button" type="submit">Enregistrer</button>
+                <button
+                  class="secondary-button"
+                  type="button"
+                  (click)="photosService.cancelEdit()"
+                >
+                  Annuler
+                </button>
+              </div>
+            </form>
+          } @else {
+            <div class="photo-content">
+              <h3>{{ photo.title || 'Photo sans titre' }}</h3>
+              @if (photo.description) {
+                <p>{{ photo.description }}</p>
+              }
+            </div>
+
+            <div class="photo-actions">
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="photosService.startEdit(photo)"
+                [attr.aria-label]="'Modifier ' + (photo.title || 'cette photo')"
+              >
+                Modifier
+              </button>
+              <button
+                class="delete-button"
+                type="button"
+                (click)="deletePhoto(photo)"
+                [attr.aria-label]="'Supprimer ' + (photo.title || 'cette photo')"
+              >
+                Supprimer
+              </button>
+            </div>
+          }
         </li>
       } @empty {
         <li class="empty-state">
