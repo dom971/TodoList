@@ -5,6 +5,7 @@ import { authGuard, guestGuard } from './core/auth.guard';
 import { DashboardOverviewComponent } from './dashboard/dashboard-overview.component';
 import { ComingSoonComponent } from './features/coming-soon.component';
 import { NotesBoardComponent } from './notes/notes-board.component';
+import { PhotosBoardComponent } from './photos/photos-board.component';
 import { AppShellComponent } from './shell/app-shell.component';
 import { TodoBoardComponent } from './todos/todo-board.component';
 
@@ -34,6 +35,10 @@ export const routes: Routes = [
       {
         path: 'notes',
         component: NotesBoardComponent,
+      },
+      {
+        path: 'photos',
+        component: PhotosBoardComponent,
       },
       {
         path: 'scanner',

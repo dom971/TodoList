@@ -1,0 +1,97 @@
+<header class="photos-header">
+  <div>
+    <p class="eyebrow">Module photos</p>
+    <h1 id="photos-title">Mes photos</h1>
+    <p class="muted-text">Ajoute des images privées dans ton espace personnel.</p>
+  </div>
+
+  <div class="photos-count" aria-label="Résumé des photos">
+    <span><strong>{{ photoCount() }}</strong> photo(s)</span>
+  </div>
+</header>
+
+@if (photosService.errorMessage()) {
+  <p class="error-message" role="alert">{{ photosService.errorMessage() }}</p>
+}
+
+<form class="photo-form" (ngSubmit)="uploadPhoto()" aria-label="Ajouter une photo">
+  <label for="photo-file">Image</label>
+  <input
+    id="photo-file"
+    name="photoFile"
+    type="file"
+    accept="image/png,image/jpeg,image/webp"
+    (change)="selectFile($event)"
+  />
+  @if (photosService.selectedFileName()) {
+    <p class="file-name">{{ photosService.selectedFileName() }}</p>
+  }
+
+  <label for="photo-title">Titre</label>
+  <input
+    id="photo-title"
+    name="photoTitle"
+    type="text"
+    placeholder="Ex : facture, souvenir, document..."
+    [ngModel]="photosService.title()"
+    (ngModelChange)="photosService.title.set($event)"
+  />
+
+  <label for="photo-description">Description</label>
+  <textarea
+    id="photo-description"
+    name="photoDescription"
+    rows="3"
+    placeholder="Ajoute une note facultative..."
+    [ngModel]="photosService.description()"
+    (ngModelChange)="photosService.description.set($event)"
+  ></textarea>
+
+  <button type="submit" [disabled]="photosService.isUploading()">
+    {{ photosService.isUploading() ? 'Envoi...' : 'Ajouter la photo' }}
+  </button>
+</form>
+
+<section class="gallery-panel" aria-labelledby="gallery-title">
+  <h2 id="gallery-title">Galerie</h2>
+
+  <ul class="photo-grid" aria-label="Galerie photos">
+    @if (photosService.isLoading()) {
+      <li class="empty-state">
+        <strong>Chargement des photos...</strong>
+        <span>Génération des liens privés en cours.</span>
+      </li>
+    } @else {
+      @for (photo of photosService.photos(); track photo.id) {
+        <li class="photo-card">
+          @if (photo.signedUrl) {
+            <img [src]="photo.signedUrl" [alt]="photo.title || 'Photo privée'" />
+          } @else {
+            <div class="missing-image">Image indisponible</div>
+          }
+
+          <div class="photo-content">
+            <h3>{{ photo.title || 'Photo sans titre' }}</h3>
+            @if (photo.description) {
+              <p>{{ photo.description }}</p>
+            }
+          </div>
+
+          <button
+            class="delete-button"
+            type="button"
+            (click)="deletePhoto(photo)"
+            [attr.aria-label]="'Supprimer ' + (photo.title || 'cette photo')"
+          >
+            Supprimer
+          </button>
+        </li>
+      } @empty {
+        <li class="empty-state">
+          <strong>Aucune photo pour le moment.</strong>
+          <span>Ajoute une première image pour remplir ta galerie.</span>
+        </li>
+      }
+    }
+  </ul>
+</section>

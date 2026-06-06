@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { AuthService } from './core/auth.service';
 import { NotesService } from './notes/notes.service';
+import { PhotosService } from './photos/photos.service';
 import { ScansService } from './scanner/scans.service';
 import { TodosService } from './todos/todos.service';
 
@@ -23,6 +24,10 @@ describe('App', () => {
     clear: () => undefined,
     loadNotes: () => Promise.resolve(),
   };
+  const photosServiceMock = {
+    clear: () => undefined,
+    loadPhotos: () => Promise.resolve(),
+  };
   const scansServiceMock = {
     clear: () => undefined,
     loadScans: () => Promise.resolve(),
@@ -35,6 +40,7 @@ describe('App', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: NotesService, useValue: notesServiceMock },
+        { provide: PhotosService, useValue: photosServiceMock },
         { provide: ScansService, useValue: scansServiceMock },
         { provide: TodosService, useValue: todosServiceMock },
       ],

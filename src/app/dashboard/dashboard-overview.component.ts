@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { NotesService } from '../notes/notes.service';
+import { PhotosService } from '../photos/photos.service';
 import { ScansService } from '../scanner/scans.service';
 import { TodosService } from '../todos/todos.service';
 
@@ -13,6 +14,7 @@ import { TodosService } from '../todos/todos.service';
 })
 export class DashboardOverviewComponent {
   protected readonly notesService = inject(NotesService);
+  protected readonly photosService = inject(PhotosService);
   protected readonly scansService = inject(ScansService);
   protected readonly todosService = inject(TodosService);
 
@@ -25,6 +27,7 @@ export class DashboardOverviewComponent {
   );
 
   protected readonly notesCount = computed(() => this.notesService.notes().length);
+  protected readonly photosCount = computed(() => this.photosService.photos().length);
   protected readonly scansCount = computed(() => this.scansService.scans().length);
   protected readonly latestScans = computed(() => this.scansService.scans().slice(0, 3));
 }

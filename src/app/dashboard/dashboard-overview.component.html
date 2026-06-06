@@ -20,6 +20,13 @@
   </article>
 
   <article class="metric-card">
+    <span>Photos</span>
+    <strong>{{ photosCount() }}</strong>
+    <small>Images privées</small>
+    <a routerLink="/app/photos">Ouvrir les photos</a>
+  </article>
+
+  <article class="metric-card">
     <span>Scans</span>
     <strong>{{ scansCount() }}</strong>
     <small>Derniers scans sauvegardés</small>
@@ -32,6 +39,7 @@
   <div>
     <a routerLink="/app/todos">Ajouter une tâche</a>
     <a routerLink="/app/notes">Écrire une note</a>
+    <a routerLink="/app/photos">Ajouter une photo</a>
     <a routerLink="/app/scanner">Scanner un code</a>
   </div>
 </section>
