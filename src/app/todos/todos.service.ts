@@ -161,6 +161,11 @@ export class TodosService {
     this.cancelEdit();
   }
 
+  closeSelection(): void {
+    this.selectedTodoId.set(null);
+    this.cancelEdit();
+  }
+
   private replaceTodo(updatedTodo: Todo): void {
     this.todos.update((todos) =>
       todos.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo)),

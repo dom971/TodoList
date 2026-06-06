@@ -129,6 +129,14 @@
               >
                 Supprimer
               </button>
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="todosService.closeSelection()"
+                [attr.aria-label]="'Fermer les options de ' + todo.title"
+              >
+                Fermer
+              </button>
             </div>
           }
         }

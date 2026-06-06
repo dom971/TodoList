@@ -152,6 +152,11 @@ export class PhotosService {
     this.cancelEdit();
   }
 
+  closeSelection(): void {
+    this.selectedPhotoId.set(null);
+    this.cancelEdit();
+  }
+
   startEdit(photo: Photo): void {
     this.selectedPhotoId.set(photo.id);
     this.editingPhotoId.set(photo.id);

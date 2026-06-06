@@ -154,4 +154,9 @@ export class NotesService {
     this.selectedNoteId.update((noteId) => (noteId === note.id ? null : note.id));
     this.cancelEdit();
   }
+
+  closeSelection(): void {
+    this.selectedNoteId.set(null);
+    this.cancelEdit();
+  }
 }

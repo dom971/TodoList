@@ -115,6 +115,14 @@
               >
                 Supprimer
               </button>
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="notesService.closeSelection()"
+                [attr.aria-label]="'Fermer les options de ' + note.title"
+              >
+                Fermer
+              </button>
             </div>
           }
         }

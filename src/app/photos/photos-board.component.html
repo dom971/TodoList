@@ -157,6 +157,14 @@
                 >
                   Supprimer
                 </button>
+                <button
+                  class="secondary-button"
+                  type="button"
+                  (click)="photosService.closeSelection()"
+                  [attr.aria-label]="'Fermer les options de ' + (photo.title || 'cette photo')"
+                >
+                  Fermer
+                </button>
               </div>
             }
           }
