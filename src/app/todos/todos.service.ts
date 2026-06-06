@@ -13,6 +13,7 @@ export class TodosService {
 
   readonly todos = signal<Todo[]>([]);
   readonly newTodoTitle = signal('');
+  readonly selectedTodoId = signal<number | null>(null);
   readonly editingTodoId = signal<number | null>(null);
   readonly editingTodoTitle = signal('');
   readonly filter = signal<TodoFilter>('all');
@@ -23,6 +24,7 @@ export class TodosService {
   clear(): void {
     this.todos.set([]);
     this.filter.set('all');
+    this.selectedTodoId.set(null);
     this.isLoading.set(false);
     this.isSaving.set(false);
     this.cancelEdit();
@@ -95,6 +97,7 @@ export class TodosService {
   }
 
   startEdit(todo: Todo): void {
+    this.selectedTodoId.set(todo.id);
     this.editingTodoId.set(todo.id);
     this.editingTodoTitle.set(todo.title);
     this.errorMessage.set('');
@@ -147,6 +150,15 @@ export class TodosService {
     }
 
     this.todos.update((todos) => todos.filter((todo) => todo.id !== id));
+
+    if (this.selectedTodoId() === id) {
+      this.selectedTodoId.set(null);
+    }
+  }
+
+  selectTodo(todo: Todo): void {
+    this.selectedTodoId.update((todoId) => (todoId === todo.id ? null : todo.id));
+    this.cancelEdit();
   }
 
   private replaceTodo(updatedTodo: Todo): void {

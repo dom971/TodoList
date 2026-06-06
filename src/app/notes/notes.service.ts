@@ -12,6 +12,7 @@ export class NotesService {
   readonly notes = signal<Note[]>([]);
   readonly title = signal('');
   readonly content = signal('');
+  readonly selectedNoteId = signal<number | null>(null);
   readonly editingNoteId = signal<number | null>(null);
   readonly editingTitle = signal('');
   readonly editingContent = signal('');
@@ -23,6 +24,7 @@ export class NotesService {
     this.notes.set([]);
     this.title.set('');
     this.content.set('');
+    this.selectedNoteId.set(null);
     this.cancelEdit();
     this.isLoading.set(false);
     this.isSaving.set(false);
@@ -79,6 +81,7 @@ export class NotesService {
   }
 
   startEdit(note: Note): void {
+    this.selectedNoteId.set(note.id);
     this.editingNoteId.set(note.id);
     this.editingTitle.set(note.title);
     this.editingContent.set(note.content);
@@ -141,5 +144,14 @@ export class NotesService {
     }
 
     this.notes.update((notes) => notes.filter((note) => note.id !== id));
+
+    if (this.selectedNoteId() === id) {
+      this.selectedNoteId.set(null);
+    }
+  }
+
+  selectNote(note: Note): void {
+    this.selectedNoteId.update((noteId) => (noteId === note.id ? null : note.id));
+    this.cancelEdit();
   }
 }

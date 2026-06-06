@@ -67,9 +67,22 @@
     </li>
   } @else {
     @for (todo of filteredTodos(); track todo.id) {
-      <li class="todo-item" [class.is-completed]="todo.completed">
+      <li
+        class="todo-item"
+        [class.is-completed]="todo.completed"
+        [class.is-selected]="todosService.selectedTodoId() === todo.id"
+        tabindex="0"
+        role="button"
+        (click)="todosService.selectTodo(todo)"
+        (keydown.enter)="todosService.selectTodo(todo)"
+        (keydown.space)="todosService.selectTodo(todo); $event.preventDefault()"
+      >
         @if (todosService.editingTodoId() === todo.id) {
-          <form class="edit-form" (ngSubmit)="saveTodoTitle(todo)">
+          <form
+            class="edit-form"
+            (click)="$event.stopPropagation()"
+            (ngSubmit)="saveTodoTitle(todo)"
+          >
             <input
               name="editingTodo"
               type="text"
@@ -98,24 +111,26 @@
             <span>{{ todo.title }}</span>
           </label>
 
-          <div class="todo-actions">
-            <button
-              class="secondary-button"
-              type="button"
-              (click)="todosService.startEdit(todo)"
-              [attr.aria-label]="'Modifier ' + todo.title"
-            >
-              Modifier
-            </button>
-            <button
-              class="delete-button"
-              type="button"
-              (click)="deleteTodo(todo.id)"
-              [attr.aria-label]="'Supprimer ' + todo.title"
-            >
-              Supprimer
-            </button>
-          </div>
+          @if (todosService.selectedTodoId() === todo.id) {
+            <div class="todo-actions" (click)="$event.stopPropagation()">
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="todosService.startEdit(todo)"
+                [attr.aria-label]="'Modifier ' + todo.title"
+              >
+                Modifier
+              </button>
+              <button
+                class="delete-button"
+                type="button"
+                (click)="deleteTodo(todo.id)"
+                [attr.aria-label]="'Supprimer ' + todo.title"
+              >
+                Supprimer
+              </button>
+            </div>
+          }
         }
       </li>
     } @empty {

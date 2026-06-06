@@ -50,9 +50,21 @@
     </li>
   } @else {
     @for (note of notesService.notes(); track note.id) {
-      <li class="note-item">
+      <li
+        class="note-item"
+        [class.is-selected]="notesService.selectedNoteId() === note.id"
+        tabindex="0"
+        role="button"
+        (click)="notesService.selectNote(note)"
+        (keydown.enter)="notesService.selectNote(note)"
+        (keydown.space)="notesService.selectNote(note); $event.preventDefault()"
+      >
         @if (notesService.editingNoteId() === note.id) {
-          <form class="edit-form" (ngSubmit)="saveNote(note)">
+          <form
+            class="edit-form"
+            (click)="$event.stopPropagation()"
+            (ngSubmit)="saveNote(note)"
+          >
             <input
               name="editingTitle"
               type="text"
@@ -85,24 +97,26 @@
             <p>{{ note.content || 'Aucun contenu.' }}</p>
           </article>
 
-          <div class="note-actions">
-            <button
-              class="secondary-button"
-              type="button"
-              (click)="notesService.startEdit(note)"
-              [attr.aria-label]="'Modifier ' + note.title"
-            >
-              Modifier
-            </button>
-            <button
-              class="delete-button"
-              type="button"
-              (click)="deleteNote(note.id)"
-              [attr.aria-label]="'Supprimer ' + note.title"
-            >
-              Supprimer
-            </button>
-          </div>
+          @if (notesService.selectedNoteId() === note.id) {
+            <div class="note-actions" (click)="$event.stopPropagation()">
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="notesService.startEdit(note)"
+                [attr.aria-label]="'Modifier ' + note.title"
+              >
+                Modifier
+              </button>
+              <button
+                class="delete-button"
+                type="button"
+                (click)="deleteNote(note.id)"
+                [attr.aria-label]="'Supprimer ' + note.title"
+              >
+                Supprimer
+              </button>
+            </div>
+          }
         }
       </li>
     } @empty {

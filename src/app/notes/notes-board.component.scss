@@ -144,6 +144,27 @@ h2 {
   display: grid;
   gap: 14px;
   padding: 14px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.note-item:hover {
+  border-color: var(--app-border-strong);
+  box-shadow: 0 8px 20px var(--app-shadow);
+  transform: translateY(-1px);
+}
+
+.note-item:focus-visible {
+  outline: 3px solid var(--app-primary);
+  outline-offset: 3px;
+}
+
+.note-item.is-selected {
+  border-color: var(--app-primary);
+  box-shadow: 0 10px 24px var(--app-shadow);
 }
 
 .note-item article p {
