@@ -142,7 +142,7 @@ export class ScannerBoardComponent implements OnDestroy {
 
   protected async copyScanValue(scan: Scan): Promise<void> {
     await navigator.clipboard.writeText(scan.value);
-    this.actionMessage.set('Scan copiÃ©.');
+    this.actionMessage.set('Scan copié.');
   }
 
   protected openScanUrl(scan: Scan): void {
@@ -184,7 +184,7 @@ export class ScannerBoardComponent implements OnDestroy {
     }
 
     await navigator.clipboard.writeText(text);
-    this.actionMessage.set('Liste des scans copiÃ©e.');
+    this.actionMessage.set('Liste des scans copiée.');
   }
 
   private isUrl(value: string): boolean {
