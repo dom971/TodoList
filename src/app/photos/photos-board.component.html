@@ -63,7 +63,15 @@
       </li>
     } @else {
       @for (photo of photosService.photos(); track photo.id) {
-        <li class="photo-card">
+        <li
+          class="photo-card"
+          [class.is-selected]="photosService.selectedPhotoId() === photo.id"
+          tabindex="0"
+          role="button"
+          (click)="photosService.selectPhoto(photo)"
+          (keydown.enter)="photosService.selectPhoto(photo)"
+          (keydown.space)="photosService.selectPhoto(photo); $event.preventDefault()"
+        >
           @if (photo.signedUrl) {
             <img [src]="photo.signedUrl" [alt]="photo.title || 'Photo privée'" />
           } @else {
@@ -71,7 +79,11 @@
           }
 
           @if (photosService.editingPhotoId() === photo.id) {
-            <form class="edit-form" (ngSubmit)="savePhotoMetadata(photo)">
+            <form
+              class="edit-form"
+              (click)="$event.stopPropagation()"
+              (ngSubmit)="savePhotoMetadata(photo)"
+            >
               <label [for]="'photo-edit-title-' + photo.id">Titre</label>
               <input
                 [id]="'photo-edit-title-' + photo.id"
@@ -109,42 +121,44 @@
               }
             </div>
 
-            <div class="photo-actions">
-              @if (photo.signedUrl) {
+            @if (photosService.selectedPhotoId() === photo.id) {
+              <div class="photo-actions" (click)="$event.stopPropagation()">
+                @if (photo.signedUrl) {
+                  <button
+                    class="secondary-button"
+                    type="button"
+                    (click)="openPhoto(photo)"
+                    [attr.aria-label]="'Ouvrir ' + (photo.title || 'cette photo')"
+                  >
+                    Ouvrir
+                  </button>
+                  <button
+                    class="secondary-button"
+                    type="button"
+                    (click)="sharePhoto(photo)"
+                    [attr.aria-label]="'Partager ' + (photo.title || 'cette photo')"
+                  >
+                    Partager
+                  </button>
+                }
                 <button
                   class="secondary-button"
                   type="button"
-                  (click)="openPhoto(photo)"
-                  [attr.aria-label]="'Ouvrir ' + (photo.title || 'cette photo')"
+                  (click)="photosService.startEdit(photo)"
+                  [attr.aria-label]="'Modifier ' + (photo.title || 'cette photo')"
                 >
-                  Ouvrir
+                  Modifier
                 </button>
                 <button
-                  class="secondary-button"
+                  class="delete-button"
                   type="button"
-                  (click)="sharePhoto(photo)"
-                  [attr.aria-label]="'Partager ' + (photo.title || 'cette photo')"
+                  (click)="deletePhoto(photo)"
+                  [attr.aria-label]="'Supprimer ' + (photo.title || 'cette photo')"
                 >
-                  Partager
+                  Supprimer
                 </button>
-              }
-              <button
-                class="secondary-button"
-                type="button"
-                (click)="photosService.startEdit(photo)"
-                [attr.aria-label]="'Modifier ' + (photo.title || 'cette photo')"
-              >
-                Modifier
-              </button>
-              <button
-                class="delete-button"
-                type="button"
-                (click)="deletePhoto(photo)"
-                [attr.aria-label]="'Supprimer ' + (photo.title || 'cette photo')"
-              >
-                Supprimer
-              </button>
-            </div>
+              </div>
+            }
           }
         </li>
       } @empty {

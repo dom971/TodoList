@@ -5,6 +5,8 @@ import { Photo } from './photo.model';
 
 const PHOTOS_BUCKET = 'photos';
 const SIGNED_URL_DURATION_SECONDS = 60 * 60;
+const COMPRESSED_IMAGE_MAX_SIZE = 1600;
+const COMPRESSED_IMAGE_QUALITY = 0.74;
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +18,7 @@ export class PhotosService {
   readonly title = signal('');
   readonly description = signal('');
   readonly selectedFileName = signal('');
+  readonly selectedPhotoId = signal<number | null>(null);
   readonly editingPhotoId = signal<number | null>(null);
   readonly editingTitle = signal('');
   readonly editingDescription = signal('');
@@ -30,6 +33,7 @@ export class PhotosService {
     this.title.set('');
     this.description.set('');
     this.selectedFileName.set('');
+    this.selectedPhotoId.set(null);
     this.cancelEdit();
     this.selectedFile = undefined;
     this.isLoading.set(false);
@@ -79,11 +83,12 @@ export class PhotosService {
     this.isUploading.set(true);
     this.errorMessage.set('');
 
-    const storagePath = `${userId}/${Date.now()}-${this.sanitizeFileName(file.name)}`;
+    const compressedFile = await this.compressImage(file);
+    const storagePath = `${userId}/${Date.now()}-${this.sanitizeFileName(compressedFile.name)}`;
     const uploadResult = await this.supabase.storage
       .from(PHOTOS_BUCKET)
-      .upload(storagePath, file, {
-        contentType: file.type,
+      .upload(storagePath, compressedFile, {
+        contentType: compressedFile.type,
         upsert: false,
       });
 
@@ -136,9 +141,19 @@ export class PhotosService {
 
     await this.supabase.storage.from(PHOTOS_BUCKET).remove([photo.storage_path]);
     this.photos.update((photos) => photos.filter((currentPhoto) => currentPhoto.id !== photo.id));
+
+    if (this.selectedPhotoId() === photo.id) {
+      this.selectedPhotoId.set(null);
+    }
+  }
+
+  selectPhoto(photo: Photo): void {
+    this.selectedPhotoId.update((photoId) => (photoId === photo.id ? null : photo.id));
+    this.cancelEdit();
   }
 
   startEdit(photo: Photo): void {
+    this.selectedPhotoId.set(photo.id);
     this.editingPhotoId.set(photo.id);
     this.editingTitle.set(photo.title ?? '');
     this.editingDescription.set(photo.description ?? '');
@@ -217,5 +232,69 @@ export class PhotosService {
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-zA-Z0-9._-]/g, '-')
       .toLowerCase();
+  }
+
+  private async compressImage(file: File): Promise<File> {
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml') {
+      return file;
+    }
+
+    let image: HTMLImageElement | undefined;
+
+    try {
+      image = await this.loadImage(file);
+      const ratio = Math.min(
+        1,
+        COMPRESSED_IMAGE_MAX_SIZE / Math.max(image.naturalWidth, image.naturalHeight),
+      );
+      const width = Math.round(image.naturalWidth * ratio);
+      const height = Math.round(image.naturalHeight * ratio);
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+
+      if (!context) {
+        return file;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      context.drawImage(image, 0, 0, width, height);
+
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, 'image/jpeg', COMPRESSED_IMAGE_QUALITY);
+      });
+
+      if (!blob) {
+        return file;
+      }
+
+      if (blob.size >= file.size) {
+        return file;
+      }
+
+      return new File([blob], this.toCompressedFileName(file.name), {
+        type: 'image/jpeg',
+        lastModified: Date.now(),
+      });
+    } catch {
+      return file;
+    } finally {
+      if (image?.src) {
+        URL.revokeObjectURL(image.src);
+      }
+    }
+  }
+
+  private loadImage(file: File): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = URL.createObjectURL(file);
+    });
+  }
+
+  private toCompressedFileName(fileName: string): string {
+    return fileName.replace(/\.[^.]+$/, '') + '.jpg';
   }
 }
