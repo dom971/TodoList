@@ -110,6 +110,24 @@
             </div>
 
             <div class="photo-actions">
+              @if (photo.signedUrl) {
+                <button
+                  class="secondary-button"
+                  type="button"
+                  (click)="openPhoto(photo)"
+                  [attr.aria-label]="'Ouvrir ' + (photo.title || 'cette photo')"
+                >
+                  Ouvrir
+                </button>
+                <button
+                  class="secondary-button"
+                  type="button"
+                  (click)="sharePhoto(photo)"
+                  [attr.aria-label]="'Partager ' + (photo.title || 'cette photo')"
+                >
+                  Partager
+                </button>
+              }
               <button
                 class="secondary-button"
                 type="button"

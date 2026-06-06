@@ -34,6 +34,35 @@ export class PhotosBoardComponent {
     return this.withUser((userId) => this.photosService.savePhotoMetadata(photo, userId));
   }
 
+  protected openPhoto(photo: Photo): void {
+    if (!photo.signedUrl) {
+      return;
+    }
+
+    window.open(photo.signedUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  protected async sharePhoto(photo: Photo): Promise<void> {
+    if (!photo.signedUrl) {
+      return;
+    }
+
+    if (!navigator.share) {
+      this.openPhoto(photo);
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title: photo.title || 'Photo',
+        text: photo.description || undefined,
+        url: photo.signedUrl,
+      });
+    } catch {
+      // The browser also throws when the user cancels the native share sheet.
+    }
+  }
+
   private async withUser(action: (userId: string) => Promise<void>): Promise<void> {
     const userId = this.auth.session()?.user.id;
 
