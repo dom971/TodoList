@@ -11,6 +11,7 @@ export class ScansService {
 
   readonly scans = signal<Scan[]>([]);
   readonly label = signal('');
+  readonly selectedScanId = signal<number | null>(null);
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
   readonly errorMessage = signal('');
@@ -18,6 +19,7 @@ export class ScansService {
   clear(): void {
     this.scans.set([]);
     this.label.set('');
+    this.selectedScanId.set(null);
     this.isLoading.set(false);
     this.isSaving.set(false);
     this.errorMessage.set('');
@@ -85,5 +87,17 @@ export class ScansService {
     }
 
     this.scans.update((scans) => scans.filter((scan) => scan.id !== id));
+
+    if (this.selectedScanId() === id) {
+      this.selectedScanId.set(null);
+    }
+  }
+
+  selectScan(scan: Scan): void {
+    this.selectedScanId.update((scanId) => (scanId === scan.id ? null : scan.id));
+  }
+
+  closeSelection(): void {
+    this.selectedScanId.set(null);
   }
 }

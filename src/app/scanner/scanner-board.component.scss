@@ -81,15 +81,24 @@ h2 {
 
 .scanner-actions,
 .result-actions,
-.scan-item {
+.scan-item,
+.scan-actions,
+.history-header {
   display: flex;
   gap: 8px;
 }
 
 .scanner-actions,
-.result-actions {
+.result-actions,
+.scan-actions,
+.history-header {
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+.history-header {
+  align-items: center;
+  justify-content: space-between;
 }
 
 .primary-button,
@@ -210,6 +219,11 @@ input:focus {
   align-items: center;
   justify-content: space-between;
   padding: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 
   div {
     min-width: 0;
@@ -231,6 +245,22 @@ input:focus {
   }
 }
 
+.scan-item:hover {
+  border-color: var(--app-border-strong);
+  box-shadow: 0 8px 20px var(--app-shadow);
+  transform: translateY(-1px);
+}
+
+.scan-item:focus-visible {
+  outline: 3px solid var(--app-primary);
+  outline-offset: 3px;
+}
+
+.scan-item.is-selected {
+  border-color: var(--app-primary);
+  box-shadow: 0 10px 24px var(--app-shadow);
+}
+
 .empty-state {
   display: grid;
   gap: 6px;
@@ -246,7 +276,9 @@ input:focus {
 @media (max-width: 640px) {
   .scanner-actions,
   .result-actions,
-  .scan-item {
+  .scan-item,
+  .scan-actions,
+  .history-header {
     display: grid;
     grid-template-columns: 1fr;
   }

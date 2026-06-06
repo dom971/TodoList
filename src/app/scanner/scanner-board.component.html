@@ -100,7 +100,17 @@
 </section>
 
 <section class="history-panel" aria-labelledby="history-title">
-  <h2 id="history-title">Historique</h2>
+  <div class="history-header">
+    <h2 id="history-title">Historique</h2>
+    <button
+      class="secondary-button"
+      type="button"
+      (click)="shareScansList()"
+      [disabled]="!hasScans()"
+    >
+      Partager la liste
+    </button>
+  </div>
 
   <ul class="scan-list" aria-label="Historique des scans">
     @if (scansService.isLoading()) {
@@ -110,20 +120,58 @@
       </li>
     } @else {
       @for (scan of scansService.scans(); track scan.id) {
-        <li class="scan-item">
+        <li
+          class="scan-item"
+          [class.is-selected]="scansService.selectedScanId() === scan.id"
+          tabindex="0"
+          role="button"
+          (click)="scansService.selectScan(scan)"
+          (keydown.enter)="scansService.selectScan(scan)"
+          (keydown.space)="scansService.selectScan(scan); $event.preventDefault()"
+        >
           <div>
             <strong>{{ scan.label || scan.format || 'Scan' }}</strong>
             <span>{{ scan.value }}</span>
           </div>
 
-          <button
-            class="delete-button"
-            type="button"
-            (click)="deleteScan(scan.id)"
-            [attr.aria-label]="'Supprimer le scan ' + scan.value"
-          >
-            Supprimer
-          </button>
+          @if (scansService.selectedScanId() === scan.id) {
+            <div class="scan-actions" (click)="$event.stopPropagation()">
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="copyScanValue(scan)"
+                [attr.aria-label]="'Copier le scan ' + scan.value"
+              >
+                Copier
+              </button>
+              @if (isScanUrl(scan)) {
+                <button
+                  class="secondary-button"
+                  type="button"
+                  (click)="openScanUrl(scan)"
+                  [attr.aria-label]="'Ouvrir le scan ' + scan.value"
+                >
+                  Ouvrir
+                </button>
+              }
+              <button
+                class="delete-button"
+                type="button"
+                (click)="deleteScan(scan.id)"
+                [attr.aria-label]="'Supprimer le scan ' + scan.value"
+              >
+                Supprimer
+              </button>
+              <button
+                class="secondary-button"
+                type="button"
+                (click)="scansService.closeSelection()"
+                [attr.aria-label]="'Fermer les options du scan ' + scan.value"
+              >
+                Fermer
+              </button>
+            </div>
+          }
         </li>
       } @empty {
         <li class="empty-state">

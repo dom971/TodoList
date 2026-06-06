@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
 
 import { AuthService } from '../core/auth.service';
+import { Scan } from './scan.model';
 import { ScansService } from './scans.service';
 
 @Component({
@@ -31,6 +32,7 @@ export class ScannerBoardComponent implements OnDestroy {
       return false;
     }
   });
+  protected readonly hasScans = computed(() => this.scansService.scans().length > 0);
 
   private readonly reader = new BrowserMultiFormatReader();
   private scannerControls?: IScannerControls;
@@ -136,5 +138,61 @@ export class ScannerBoardComponent implements OnDestroy {
     }
 
     await this.scansService.deleteScan(id, userId);
+  }
+
+  protected async copyScanValue(scan: Scan): Promise<void> {
+    await navigator.clipboard.writeText(scan.value);
+    this.actionMessage.set('Scan copiÃ©.');
+  }
+
+  protected openScanUrl(scan: Scan): void {
+    if (!this.isUrl(scan.value)) {
+      return;
+    }
+
+    window.open(scan.value, '_blank', 'noopener,noreferrer');
+  }
+
+  protected isScanUrl(scan: Scan): boolean {
+    return this.isUrl(scan.value);
+  }
+
+  protected async shareScansList(): Promise<void> {
+    const scans = this.scansService.scans();
+
+    if (!scans.length) {
+      return;
+    }
+
+    const text = scans
+      .map((scan, index) => {
+        const label = scan.label || scan.format || `Scan ${index + 1}`;
+        return `${index + 1}. ${label}: ${scan.value}`;
+      })
+      .join('\n');
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Liste des scans',
+          text,
+        });
+        return;
+      } catch {
+        // The browser also throws when the user cancels the native share sheet.
+      }
+    }
+
+    await navigator.clipboard.writeText(text);
+    this.actionMessage.set('Liste des scans copiÃ©e.');
+  }
+
+  private isUrl(value: string): boolean {
+    try {
+      const url = new URL(value);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
   }
 }
