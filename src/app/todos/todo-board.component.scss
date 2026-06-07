@@ -12,6 +12,10 @@
   gap: 12px;
 }
 
+.export-button {
+  justify-self: end;
+}
+
 .eyebrow {
   margin: 0 0 8px;
   color: var(--app-primary);
@@ -340,6 +344,7 @@ h1 {
   }
 
   .delete-button,
+  .export-button,
   .secondary-button,
   .save-button {
     width: 100%;

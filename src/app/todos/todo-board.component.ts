@@ -92,6 +92,19 @@ export class TodoBoardComponent {
     return this.withUser((userId) => this.todosService.deleteTodo(id, userId));
   }
 
+  protected async exportTodos(): Promise<void> {
+    const text = this.todosService
+      .todos()
+      .map((todo) => `${todo.completed ? '[x]' : '[ ]'} ${todo.title}`)
+      .join('\n');
+
+    if (!text) {
+      return;
+    }
+
+    await this.exportTextFile(text, 'taches-export.txt', 'Export des tâches');
+  }
+
   private async withUser(action: (userId: string) => Promise<void>): Promise<void> {
     const userId = this.auth.session()?.user.id;
 
@@ -109,5 +122,41 @@ export class TodoBoardComponent {
         block: 'center',
       });
     });
+  }
+
+  private async exportTextFile(text: string, fileName: string, title: string): Promise<void> {
+    const file = new File([text], fileName, {
+      type: 'text/plain',
+      lastModified: Date.now(),
+    });
+    const shareData: ShareData = {
+      title,
+      files: [file],
+    };
+
+    if (navigator.share && this.canShareFiles(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // The browser also throws when the user cancels the native share sheet.
+      }
+    }
+
+    this.downloadFile(file);
+  }
+
+  private canShareFiles(shareData: ShareData): boolean {
+    return 'canShare' in navigator && navigator.canShare(shareData);
+  }
+
+  private downloadFile(file: File): void {
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 }

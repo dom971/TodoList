@@ -7,6 +7,14 @@
 
   <div class="notes-count" aria-label="Résumé des notes">
     <span><strong>{{ noteCount() }}</strong> note(s)</span>
+    <button
+      class="secondary-button export-button"
+      type="button"
+      (click)="exportNotes()"
+      [disabled]="!notesService.notes().length"
+    >
+      Exporter
+    </button>
   </div>
 </header>
 

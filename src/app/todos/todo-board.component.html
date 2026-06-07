@@ -9,6 +9,14 @@
       <span><strong>{{ remainingCount() }}</strong> à faire</span>
       <span><strong>{{ completedCount() }}</strong> terminée(s)</span>
     </div>
+    <button
+      class="secondary-button export-button"
+      type="button"
+      (click)="exportTodos()"
+      [disabled]="!todosService.todos().length"
+    >
+      Exporter
+    </button>
   </div>
 </header>
 
