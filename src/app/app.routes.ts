@@ -41,6 +41,11 @@ export const routes: Routes = [
         component: PhotosBoardComponent,
       },
       {
+        path: 'search',
+        loadComponent: () =>
+          import('./search/search-page.component').then((component) => component.SearchPageComponent),
+      },
+      {
         path: 'scanner',
         loadComponent: () =>
           import('./scanner/scanner-board.component').then(

@@ -1,0 +1,65 @@
+<header class="search-header">
+  <div>
+    <p class="eyebrow">Recherche globale</p>
+    <h1 id="search-title">Recherche</h1>
+    <p class="muted-text">Retrouve rapidement une tâche, une note, un scan ou une photo.</p>
+  </div>
+
+  <div class="search-count" aria-label="Résumé de la recherche">
+    <span><strong>{{ resultCount() }}</strong> résultat(s)</span>
+  </div>
+</header>
+
+@if (searchService.errorMessage()) {
+  <p class="error-message" role="alert">{{ searchService.errorMessage() }}</p>
+}
+
+<form class="search-form" (ngSubmit)="search()" aria-label="Rechercher dans l'application">
+  <label for="global-search">Terme à rechercher</label>
+  <div class="search-form-row">
+    <input
+      id="global-search"
+      name="globalSearch"
+      type="search"
+      placeholder="Ex : facture, produit, rendez-vous..."
+      [ngModel]="searchService.query()"
+      (ngModelChange)="searchService.query.set($event)"
+      [disabled]="searchService.isSearching()"
+      autocomplete="off"
+    />
+    <button type="submit" [disabled]="searchService.isSearching()">
+      {{ searchService.isSearching() ? 'Recherche...' : 'Rechercher' }}
+    </button>
+  </div>
+</form>
+
+<section class="results-panel" aria-labelledby="results-title">
+  <h2 id="results-title">Résultats</h2>
+
+  @if (!searchService.query().trim()) {
+    <p class="empty-copy">Saisis un mot ou un numéro pour lancer une recherche.</p>
+  } @else if (searchService.isSearching()) {
+    <p class="empty-copy">Recherche en cours...</p>
+  } @else if (!resultCount()) {
+    <p class="empty-copy">Aucun résultat trouvé.</p>
+  } @else {
+    @for (group of groupedResults(); track group.type) {
+      @if (group.results.length) {
+        <section class="result-group" [attr.aria-label]="group.label">
+          <h3>{{ group.label }}</h3>
+
+          <ul class="result-list">
+            @for (result of group.results; track result.type + '-' + result.id) {
+              <li>
+                <a [routerLink]="result.route">
+                  <strong>{{ result.title }}</strong>
+                  <span>{{ result.description }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    }
+  }
+</section>
