@@ -122,6 +122,7 @@
       @for (scan of scansService.scans(); track scan.id) {
         <li
           class="scan-item"
+          [attr.id]="'scan-' + scan.id"
           [class.is-selected]="scansService.selectedScanId() === scan.id"
           tabindex="0"
           role="button"

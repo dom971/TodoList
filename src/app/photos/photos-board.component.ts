@@ -1,5 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../core/auth.service';
 import { Photo } from './photo.model';
@@ -14,8 +16,34 @@ import { PhotosService } from './photos.service';
 export class PhotosBoardComponent {
   protected readonly auth = inject(AuthService);
   protected readonly photosService = inject(PhotosService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
 
   protected readonly photoCount = computed(() => this.photosService.photos().length);
+
+  constructor() {
+    effect(() => {
+      const selectedId = Number(this.queryParamMap().get('selected'));
+
+      if (!selectedId) {
+        return;
+      }
+
+      const photo = this.photosService
+        .photos()
+        .find((currentPhoto) => currentPhoto.id === selectedId);
+
+      if (!photo) {
+        return;
+      }
+
+      this.photosService.cancelEdit();
+      this.photosService.selectedPhotoId.set(photo.id);
+      this.scrollToSelectedItem('photo', photo.id);
+    });
+  }
 
   protected selectFile(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -71,5 +99,14 @@ export class PhotosBoardComponent {
     }
 
     await action(userId);
+  }
+
+  private scrollToSelectedItem(prefix: string, id: number): void {
+    setTimeout(() => {
+      document.getElementById(`${prefix}-${id}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    });
   }
 }

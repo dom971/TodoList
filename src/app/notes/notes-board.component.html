@@ -52,6 +52,7 @@
     @for (note of notesService.notes(); track note.id) {
       <li
         class="note-item"
+        [attr.id]="'note-' + note.id"
         [class.is-selected]="notesService.selectedNoteId() === note.id"
         tabindex="0"
         role="button"

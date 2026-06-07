@@ -51,7 +51,7 @@
           <ul class="result-list">
             @for (result of group.results; track result.type + '-' + result.id) {
               <li>
-                <a [routerLink]="result.route">
+                <a [routerLink]="result.route" [queryParams]="{ selected: result.id }">
                   <strong>{{ result.title }}</strong>
                   <span>{{ result.description }}</span>
                 </a>

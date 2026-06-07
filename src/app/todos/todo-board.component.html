@@ -69,6 +69,7 @@
     @for (todo of filteredTodos(); track todo.id) {
       <li
         class="todo-item"
+        [attr.id]="'todo-' + todo.id"
         [class.is-completed]="todo.completed"
         [class.is-selected]="todosService.selectedTodoId() === todo.id"
         tabindex="0"

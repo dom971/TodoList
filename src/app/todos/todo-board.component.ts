@@ -1,5 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../core/auth.service';
 import { Todo } from './todo.model';
@@ -14,6 +16,10 @@ import { TodosService } from './todos.service';
 export class TodoBoardComponent {
   protected readonly auth = inject(AuthService);
   protected readonly todosService = inject(TodosService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
 
   protected readonly remainingCount = computed(
     () => this.todosService.todos().filter((todo) => !todo.completed).length,
@@ -49,6 +55,27 @@ export class TodoBoardComponent {
 
   protected readonly userEmail = computed(() => this.auth.session()?.user.email ?? '');
 
+  constructor() {
+    effect(() => {
+      const selectedId = Number(this.queryParamMap().get('selected'));
+
+      if (!selectedId) {
+        return;
+      }
+
+      const todo = this.todosService.todos().find((currentTodo) => currentTodo.id === selectedId);
+
+      if (!todo) {
+        return;
+      }
+
+      this.todosService.filter.set('all');
+      this.todosService.cancelEdit();
+      this.todosService.selectedTodoId.set(todo.id);
+      this.scrollToSelectedItem('todo', todo.id);
+    });
+  }
+
   protected addTodo(): Promise<void> {
     return this.withUser((userId) => this.todosService.addTodo(userId));
   }
@@ -73,5 +100,14 @@ export class TodoBoardComponent {
     }
 
     await action(userId);
+  }
+
+  private scrollToSelectedItem(prefix: string, id: number): void {
+    setTimeout(() => {
+      document.getElementById(`${prefix}-${id}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    });
   }
 }

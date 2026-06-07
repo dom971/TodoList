@@ -1,5 +1,7 @@
-import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
 
 import { AuthService } from '../core/auth.service';
@@ -17,6 +19,10 @@ export class ScannerBoardComponent implements OnDestroy {
 
   protected readonly auth = inject(AuthService);
   protected readonly scansService = inject(ScansService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParamMap = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
 
   protected readonly isScanning = signal(false);
   protected readonly scannedValue = signal('');
@@ -36,6 +42,25 @@ export class ScannerBoardComponent implements OnDestroy {
 
   private readonly reader = new BrowserMultiFormatReader();
   private scannerControls?: IScannerControls;
+
+  constructor() {
+    effect(() => {
+      const selectedId = Number(this.queryParamMap().get('selected'));
+
+      if (!selectedId) {
+        return;
+      }
+
+      const scan = this.scansService.scans().find((currentScan) => currentScan.id === selectedId);
+
+      if (!scan) {
+        return;
+      }
+
+      this.scansService.selectedScanId.set(scan.id);
+      this.scrollToSelectedItem('scan', scan.id);
+    });
+  }
 
   ngOnDestroy(): void {
     this.stopScanner();
@@ -189,5 +214,14 @@ export class ScannerBoardComponent implements OnDestroy {
     } catch {
       return false;
     }
+  }
+
+  private scrollToSelectedItem(prefix: string, id: number): void {
+    setTimeout(() => {
+      document.getElementById(`${prefix}-${id}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    });
   }
 }

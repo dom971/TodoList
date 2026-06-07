@@ -65,6 +65,7 @@
       @for (photo of photosService.photos(); track photo.id) {
         <li
           class="photo-card"
+          [attr.id]="'photo-' + photo.id"
           [class.is-selected]="photosService.selectedPhotoId() === photo.id"
           tabindex="0"
           role="button"
