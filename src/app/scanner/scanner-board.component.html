@@ -102,14 +102,24 @@
 <section class="history-panel" aria-labelledby="history-title">
   <div class="history-header">
     <h2 id="history-title">Historique</h2>
-    <button
-      class="secondary-button"
-      type="button"
-      (click)="shareScansList()"
-      [disabled]="!hasScans()"
-    >
-      Partager la liste
-    </button>
+    <div class="history-actions">
+      <button
+        class="secondary-button"
+        type="button"
+        (click)="shareScansList()"
+        [disabled]="!hasScans()"
+      >
+        Partager la liste
+      </button>
+      <button
+        class="secondary-button"
+        type="button"
+        (click)="exportScansList()"
+        [disabled]="!hasScans()"
+      >
+        Exporter
+      </button>
+    </div>
   </div>
 
   <ul class="scan-list" aria-label="Historique des scans">

@@ -183,13 +183,11 @@ export class ScannerBoardComponent implements OnDestroy {
   }
 
   protected async shareScansList(): Promise<void> {
-    const scans = this.scansService.scans();
+    const text = this.getScansExportText();
 
-    if (!scans.length) {
+    if (!text) {
       return;
     }
-
-    const text = scans.map((scan) => scan.value).join('\n');
 
     if (navigator.share) {
       try {
@@ -207,6 +205,35 @@ export class ScannerBoardComponent implements OnDestroy {
     this.actionMessage.set('Liste des scans copiée.');
   }
 
+  protected async exportScansList(): Promise<void> {
+    const text = this.getScansExportText();
+
+    if (!text) {
+      return;
+    }
+
+    const file = new File([text], 'scans-export.txt', {
+      type: 'text/plain',
+      lastModified: Date.now(),
+    });
+    const shareData: ShareData = {
+      title: 'Export des scans',
+      files: [file],
+    };
+
+    if (navigator.share && this.canShareFiles(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // The browser also throws when the user cancels the native share sheet.
+      }
+    }
+
+    this.downloadFile(file);
+    this.actionMessage.set('Export des scans téléchargé.');
+  }
+
   private isUrl(value: string): boolean {
     try {
       const url = new URL(value);
@@ -214,6 +241,24 @@ export class ScannerBoardComponent implements OnDestroy {
     } catch {
       return false;
     }
+  }
+
+  private getScansExportText(): string {
+    return this.scansService.scans().map((scan) => scan.value).join('\n');
+  }
+
+  private canShareFiles(shareData: ShareData): boolean {
+    return 'canShare' in navigator && navigator.canShare(shareData);
+  }
+
+  private downloadFile(file: File): void {
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   private scrollToSelectedItem(prefix: string, id: number): void {

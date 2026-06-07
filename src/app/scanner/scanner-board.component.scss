@@ -83,6 +83,7 @@ h2 {
 .result-actions,
 .scan-item,
 .scan-actions,
+.history-actions,
 .history-header {
   display: flex;
   gap: 8px;
@@ -91,6 +92,7 @@ h2 {
 .scanner-actions,
 .result-actions,
 .scan-actions,
+.history-actions,
 .history-header {
   justify-content: flex-end;
   flex-wrap: wrap;
@@ -278,6 +280,7 @@ input:focus {
   .result-actions,
   .scan-item,
   .scan-actions,
+  .history-actions,
   .history-header {
     display: grid;
     grid-template-columns: 1fr;
