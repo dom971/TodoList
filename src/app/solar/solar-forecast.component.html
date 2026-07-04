@@ -1,0 +1,71 @@
+<header class="solar-header">
+  <div>
+    <p class="eyebrow">Module solaire</p>
+    <h1 id="solar-title">Prévisions solaires</h1>
+    <p class="muted-text">Irradiation solaire estimée sur 7 jours glissants à Petit-Canal.</p>
+  </div>
+
+  <button
+    class="secondary-button"
+    type="button"
+    (click)="reload()"
+    [disabled]="solarForecastService.isLoading()"
+  >
+    Actualiser
+  </button>
+</header>
+
+@if (solarForecastService.errorMessage()) {
+  <p class="error-message" role="alert">{{ solarForecastService.errorMessage() }}</p>
+}
+
+<section class="summary-panel" aria-labelledby="solar-summary-title">
+  <div>
+    <h2 id="solar-summary-title">Petit-Canal, Guadeloupe</h2>
+    <p>Latitude 16.383333, longitude -61.483333</p>
+  </div>
+
+  @if (bestDay(); as day) {
+    <div class="best-day">
+      <span>Meilleure journée</span>
+      <strong>{{ formatDate(day.date) }}</strong>
+      <small>{{ day.irradiationKwh }} kWh/m²</small>
+    </div>
+  }
+</section>
+
+<section class="forecast-panel" aria-labelledby="solar-forecast-title">
+  <h2 id="solar-forecast-title">7 prochains jours</h2>
+
+  @if (solarForecastService.isLoading()) {
+    <p class="empty-copy">Chargement des prévisions solaires...</p>
+  } @else {
+    <ul class="forecast-grid" aria-label="Prévisions d'irradiation solaire">
+      @for (day of solarForecastService.forecast(); track day.date) {
+        <li class="forecast-card">
+          <div>
+            <h3>{{ formatDate(day.date) }}</h3>
+            <span>{{ getSolarLevel(day) }}</span>
+          </div>
+
+          <strong>{{ day.irradiationKwh }} kWh/m²</strong>
+          <dl>
+            <div>
+              <dt>Ensoleillement</dt>
+              <dd>{{ day.sunshineHours }} h</dd>
+            </div>
+            <div>
+              <dt>UV max</dt>
+              <dd>{{ day.uvIndexMax }}</dd>
+            </div>
+          </dl>
+        </li>
+      } @empty {
+        <li class="empty-state">
+          <strong>Aucune prévision disponible.</strong>
+          <span>Réessaie dans quelques instants.</span>
+        </li>
+      }
+    </ul>
+  }
+</section>

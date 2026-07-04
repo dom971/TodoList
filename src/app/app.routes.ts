@@ -53,6 +53,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'solar',
+        loadComponent: () =>
+          import('./solar/solar-forecast.component').then(
+            (component) => component.SolarForecastComponent,
+          ),
+      },
+      {
         path: 'coming-soon',
         component: ComingSoonComponent,
       },
