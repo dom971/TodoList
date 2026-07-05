@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 import { NhcOutlook, NhcRiskLevel, NhcSystem } from './nhc-outlook.model';
 
-const NHC_ATLANTIC_OUTLOOK_URL = '/nhc/gtwo.xml';
+const NHC_ATLANTIC_OUTLOOK_URLS = ['/nhc/xml/TWOAT.xml', '/nhc/gtwo.xml'];
 const NHC_ATLANTIC_PAGE_URL = 'https://www.nhc.noaa.gov/gtwo.php?basin=atlc&fdays=7';
 
 @Injectable({
@@ -18,21 +18,7 @@ export class NhcOutlookService {
     this.errorMessage.set('');
 
     try {
-      const response = await fetch(NHC_ATLANTIC_OUTLOOK_URL);
-
-      if (!response.ok) {
-        throw new Error('Bulletin NHC indisponible.');
-      }
-
-      const xml = await response.text();
-      const document = new DOMParser().parseFromString(xml, 'application/xml');
-      const parseError = document.querySelector('parsererror');
-
-      if (parseError) {
-        throw new Error('Bulletin NHC illisible.');
-      }
-
-      this.outlook.set(this.toOutlook(document));
+      this.outlook.set(await this.fetchFirstReadableOutlook());
     } catch (error) {
       this.errorMessage.set(
         error instanceof Error ? error.message : 'Bulletin NHC indisponible.',
@@ -40,6 +26,39 @@ export class NhcOutlookService {
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  private async fetchFirstReadableOutlook(): Promise<NhcOutlook> {
+    for (const url of NHC_ATLANTIC_OUTLOOK_URLS) {
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const xml = await response.text();
+        const document = this.parseXml(xml);
+
+        if (document) {
+          return this.toOutlook(document);
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    throw new Error('Bulletin NHC indisponible.');
+  }
+
+  private parseXml(xml: string): Document | null {
+    const parser = new DOMParser();
+    const normalizedXml = xml
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[\da-f]+;)/gi, '&amp;');
+    const document = parser.parseFromString(normalizedXml, 'application/xml');
+
+    return document.querySelector('parsererror') ? null : document;
   }
 
   private toOutlook(document: Document): NhcOutlook {
