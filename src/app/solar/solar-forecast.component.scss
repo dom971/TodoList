@@ -50,6 +50,7 @@ h3 {
 }
 
 .summary-panel,
+.nhc-panel,
 .forecast-panel {
   display: grid;
   gap: 14px;
@@ -198,6 +199,60 @@ h3 {
   }
 }
 
+.nhc-status {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: var(--app-surface-muted);
+
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    color: var(--app-text);
+  }
+
+  small {
+    margin-top: 3px;
+    color: var(--app-text-muted);
+  }
+}
+
+.nhc-low {
+  border-color: var(--app-success-border);
+  background: var(--app-success-bg);
+}
+
+.nhc-watch {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.nhc-high {
+  border-color: var(--app-danger-border);
+  background: var(--app-danger-bg);
+}
+
+.nhc-summary {
+  color: var(--app-text-soft);
+  line-height: 1.55;
+}
+
+.nhc-details {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  a {
+    color: var(--app-primary-strong);
+    font-weight: 800;
+  }
+}
+
 .risk-low {
   border-color: var(--app-success-border);
   background: var(--app-success-bg);
@@ -219,6 +274,11 @@ h3 {
 }
 
 :host-context([data-theme='dark']) .risk-watch {
+  border-color: #a16207;
+  background: #3a2d0b;
+}
+
+:host-context([data-theme='dark']) .nhc-watch {
   border-color: #a16207;
   background: #3a2d0b;
 }
@@ -305,7 +365,8 @@ dd {
   }
 
   .forecast-grid,
-  dl {
+  dl,
+  .nhc-details {
     grid-template-columns: 1fr;
   }
 

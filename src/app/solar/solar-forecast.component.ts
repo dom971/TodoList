@@ -1,5 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 
+import { NhcOutlook } from './nhc-outlook.model';
+import { NhcOutlookService } from './nhc-outlook.service';
 import { SolarForecastDay } from './solar-forecast.model';
 import { SolarForecastService } from './solar-forecast.service';
 
@@ -9,6 +11,7 @@ import { SolarForecastService } from './solar-forecast.service';
   styleUrl: './solar-forecast.component.scss',
 })
 export class SolarForecastComponent {
+  protected readonly nhcOutlookService = inject(NhcOutlookService);
   protected readonly solarForecastService = inject(SolarForecastService);
 
   protected readonly bestDay = computed(() =>
@@ -21,10 +24,17 @@ export class SolarForecastComponent {
     if (!this.solarForecastService.forecast().length) {
       void this.solarForecastService.loadForecast();
     }
+
+    if (!this.nhcOutlookService.outlook()) {
+      void this.nhcOutlookService.loadOutlook();
+    }
   }
 
   protected reload(): Promise<void> {
-    return this.solarForecastService.loadForecast();
+    return Promise.all([
+      this.solarForecastService.loadForecast(),
+      this.nhcOutlookService.loadOutlook(),
+    ]).then(() => undefined);
   }
 
   protected formatDate(date: string): string {
@@ -40,6 +50,35 @@ export class SolarForecastComponent {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(dateTime));
+  }
+
+  protected formatDateTime(dateTime: string): string {
+    if (!dateTime) {
+      return 'Date non disponible';
+    }
+
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(dateTime));
+  }
+
+  protected getNhcPanelClass(outlook: NhcOutlook): string {
+    return `nhc-${outlook.riskLevel}`;
+  }
+
+  protected getNhcIcon(outlook: NhcOutlook): string {
+    if (outlook.riskLevel === 'high') {
+      return '🌀';
+    }
+
+    if (outlook.riskLevel === 'watch') {
+      return '🌊';
+    }
+
+    return '✅';
   }
 
   protected getSolarLevel(day: SolarForecastDay): string {
