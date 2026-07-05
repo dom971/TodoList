@@ -10,7 +10,21 @@ SOLAR_FORECAST_URL.searchParams.set('latitude', String(PETIT_CANAL_LATITUDE));
 SOLAR_FORECAST_URL.searchParams.set('longitude', String(PETIT_CANAL_LONGITUDE));
 SOLAR_FORECAST_URL.searchParams.set(
   'daily',
-  'shortwave_radiation_sum,sunshine_duration,uv_index_max',
+  [
+    'weather_code',
+    'temperature_2m_max',
+    'temperature_2m_min',
+    'sunrise',
+    'sunset',
+    'daylight_duration',
+    'sunshine_duration',
+    'uv_index_max',
+    'precipitation_sum',
+    'precipitation_probability_max',
+    'wind_speed_10m_max',
+    'wind_gusts_10m_max',
+    'shortwave_radiation_sum',
+  ].join(','),
 );
 SOLAR_FORECAST_URL.searchParams.set('timezone', 'America/Guadeloupe');
 SOLAR_FORECAST_URL.searchParams.set('forecast_days', '7');
@@ -42,6 +56,16 @@ export class SolarForecastService {
           irradiationKwh: this.toKwh(data.daily.shortwave_radiation_sum[index]),
           sunshineHours: this.toHours(data.daily.sunshine_duration[index]),
           uvIndexMax: data.daily.uv_index_max[index],
+          weatherCode: data.daily.weather_code[index],
+          temperatureMax: this.round(data.daily.temperature_2m_max[index]),
+          temperatureMin: this.round(data.daily.temperature_2m_min[index]),
+          precipitationProbabilityMax: data.daily.precipitation_probability_max[index] ?? 0,
+          precipitationSum: this.round(data.daily.precipitation_sum[index] ?? 0),
+          windSpeedMax: this.round(data.daily.wind_speed_10m_max[index] ?? 0),
+          windGustsMax: this.round(data.daily.wind_gusts_10m_max[index] ?? 0),
+          sunrise: data.daily.sunrise[index],
+          sunset: data.daily.sunset[index],
+          daylightHours: this.toHours(data.daily.daylight_duration[index]),
         })),
       );
     } catch (error) {
@@ -60,13 +84,27 @@ export class SolarForecastService {
   private toHours(seconds: number): number {
     return Number((seconds / 3600).toFixed(1));
   }
+
+  private round(value: number): number {
+    return Number(value.toFixed(1));
+  }
 }
 
 interface OpenMeteoSolarResponse {
   daily: {
     time: string[];
+    weather_code: number[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    sunrise: string[];
+    sunset: string[];
+    daylight_duration: number[];
     shortwave_radiation_sum: number[];
     sunshine_duration: number[];
     uv_index_max: number[];
+    precipitation_sum: number[];
+    precipitation_probability_max: number[];
+    wind_speed_10m_max: number[];
+    wind_gusts_10m_max: number[];
   };
 }

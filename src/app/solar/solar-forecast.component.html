@@ -2,7 +2,9 @@
   <div>
     <p class="eyebrow">Module solaire</p>
     <h1 id="solar-title">Prévisions solaires</h1>
-    <p class="muted-text">Irradiation solaire estimée sur 7 jours glissants à Petit-Canal.</p>
+    <p class="muted-text">
+      Irradiation, météo, éphémérides et surveillance tropicale sur 7 jours à Petit-Canal.
+    </p>
   </div>
 
   <button
@@ -38,18 +40,65 @@
   <h2 id="solar-forecast-title">7 prochains jours</h2>
 
   @if (solarForecastService.isLoading()) {
-    <p class="empty-copy">Chargement des prévisions solaires...</p>
+    <p class="empty-copy">Chargement des prévisions...</p>
   } @else {
-    <ul class="forecast-grid" aria-label="Prévisions d'irradiation solaire">
+    <ul class="forecast-grid" aria-label="Prévisions solaires et météo">
       @for (day of solarForecastService.forecast(); track day.date) {
+        @let weatherTrend = getWeatherTrend(day);
+        @let temperatureTrend = getTemperatureTrend(day);
+        @let moonPhase = getMoonPhase(day);
+        @let stormRisk = getStormRisk(day);
+
         <li class="forecast-card">
-          <div>
-            <h3>{{ formatDate(day.date) }}</h3>
-            <span>{{ getSolarLevel(day) }}</span>
+          <div class="card-header">
+            <div>
+              <h3>{{ formatDate(day.date) }}</h3>
+              <span>{{ getSolarLevel(day) }}</span>
+            </div>
+            <strong>{{ day.irradiationKwh }} kWh/m²</strong>
           </div>
 
-          <strong>{{ day.irradiationKwh }} kWh/m²</strong>
+          <div class="trend-row" aria-label="Tendance météo">
+            <span class="pictogram" aria-hidden="true">{{ weatherTrend.icon }}</span>
+            <div>
+              <small>Tendance météo</small>
+              <b>{{ weatherTrend.label }}</b>
+            </div>
+          </div>
+
+          <div class="trend-row" aria-label="Températures">
+            <span class="pictogram" aria-hidden="true">{{ temperatureTrend.icon }}</span>
+            <div>
+              <small>Températures</small>
+              <b>{{ day.temperatureMin }}°C / {{ day.temperatureMax }}°C</b>
+            </div>
+          </div>
+
+          <div class="trend-row" aria-label="Phase de la lune">
+            <span class="pictogram" aria-hidden="true">{{ moonPhase.icon }}</span>
+            <div>
+              <small>Lune</small>
+              <b>{{ moonPhase.label }}</b>
+            </div>
+          </div>
+
+          <div class="risk-banner {{ stormRisk.className }}">
+            <span class="pictogram" aria-hidden="true">{{ stormRisk.icon }}</span>
+            <div>
+              <strong>{{ stormRisk.label }}</strong>
+              <small>{{ stormRisk.detail }}</small>
+            </div>
+          </div>
+
           <dl>
+            <div>
+              <dt>Lever / coucher</dt>
+              <dd>{{ formatTime(day.sunrise) }} / {{ formatTime(day.sunset) }}</dd>
+            </div>
+            <div>
+              <dt>Jour</dt>
+              <dd>{{ day.daylightHours }} h</dd>
+            </div>
             <div>
               <dt>Ensoleillement</dt>
               <dd>{{ day.sunshineHours }} h</dd>
@@ -57,6 +106,14 @@
             <div>
               <dt>UV max</dt>
               <dd>{{ day.uvIndexMax }}</dd>
+            </div>
+            <div>
+              <dt>Pluie</dt>
+              <dd>{{ day.precipitationSum }} mm · {{ day.precipitationProbabilityMax }}%</dd>
+            </div>
+            <div>
+              <dt>Rafales</dt>
+              <dd>{{ day.windGustsMax }} km/h</dd>
             </div>
           </dl>
         </li>
