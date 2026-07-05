@@ -1,10 +1,10 @@
 {
-  "/nhc": {
-    "target": "https://www.nhc.noaa.gov",
+  "/vigilance": {
+    "target": "https://vigilance.meteofrance.fr",
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/nhc": ""
+      "^/vigilance": ""
     }
   }
 }

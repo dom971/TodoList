@@ -26,6 +26,7 @@ SOLAR_FORECAST_URL.searchParams.set(
     'shortwave_radiation_sum',
   ].join(','),
 );
+SOLAR_FORECAST_URL.searchParams.set('hourly', 'pressure_msl');
 SOLAR_FORECAST_URL.searchParams.set('timezone', 'America/Guadeloupe');
 SOLAR_FORECAST_URL.searchParams.set('forecast_days', '7');
 
@@ -49,24 +50,32 @@ export class SolarForecastService {
       }
 
       const data = (await response.json()) as OpenMeteoSolarResponse;
+      const pressureByDate = this.getDailyPressure(data.hourly);
 
       this.forecast.set(
-        data.daily.time.map((date, index) => ({
-          date,
-          irradiationKwh: this.toKwh(data.daily.shortwave_radiation_sum[index]),
-          sunshineHours: this.toHours(data.daily.sunshine_duration[index]),
-          uvIndexMax: data.daily.uv_index_max[index],
-          weatherCode: data.daily.weather_code[index],
-          temperatureMax: this.round(data.daily.temperature_2m_max[index]),
-          temperatureMin: this.round(data.daily.temperature_2m_min[index]),
-          precipitationProbabilityMax: data.daily.precipitation_probability_max[index] ?? 0,
-          precipitationSum: this.round(data.daily.precipitation_sum[index] ?? 0),
-          windSpeedMax: this.round(data.daily.wind_speed_10m_max[index] ?? 0),
-          windGustsMax: this.round(data.daily.wind_gusts_10m_max[index] ?? 0),
-          sunrise: data.daily.sunrise[index],
-          sunset: data.daily.sunset[index],
-          daylightHours: this.toHours(data.daily.daylight_duration[index]),
-        })),
+        data.daily.time.map((date, index) => {
+          const pressureMean = pressureByDate.get(date) ?? 0;
+          const previousPressure = pressureByDate.get(data.daily.time[index - 1]) ?? pressureMean;
+
+          return {
+            date,
+            irradiationKwh: this.toKwh(data.daily.shortwave_radiation_sum[index]),
+            sunshineHours: this.toHours(data.daily.sunshine_duration[index]),
+            uvIndexMax: data.daily.uv_index_max[index],
+            weatherCode: data.daily.weather_code[index],
+            temperatureMax: this.round(data.daily.temperature_2m_max[index]),
+            temperatureMin: this.round(data.daily.temperature_2m_min[index]),
+            precipitationProbabilityMax: data.daily.precipitation_probability_max[index] ?? 0,
+            precipitationSum: this.round(data.daily.precipitation_sum[index] ?? 0),
+            pressureMean,
+            pressureDelta: this.round(pressureMean - previousPressure),
+            windSpeedMax: this.round(data.daily.wind_speed_10m_max[index] ?? 0),
+            windGustsMax: this.round(data.daily.wind_gusts_10m_max[index] ?? 0),
+            sunrise: data.daily.sunrise[index],
+            sunset: data.daily.sunset[index],
+            daylightHours: this.toHours(data.daily.daylight_duration[index]),
+          };
+        }),
       );
     } catch (error) {
       this.errorMessage.set(
@@ -88,6 +97,30 @@ export class SolarForecastService {
   private round(value: number): number {
     return Number(value.toFixed(1));
   }
+
+  private getDailyPressure(hourly: OpenMeteoSolarResponse['hourly']): Map<string, number> {
+    const pressureGroups = hourly.time.reduce((groups, time, index) => {
+      const date = time.slice(0, 10);
+      const value = hourly.pressure_msl[index];
+
+      if (!Number.isFinite(value)) {
+        return groups;
+      }
+
+      const values = groups.get(date) ?? [];
+      values.push(value);
+      groups.set(date, values);
+
+      return groups;
+    }, new Map<string, number[]>());
+
+    return new Map(
+      [...pressureGroups.entries()].map(([date, values]) => [
+        date,
+        this.round(values.reduce((total, value) => total + value, 0) / values.length),
+      ]),
+    );
+  }
 }
 
 interface OpenMeteoSolarResponse {
@@ -106,5 +139,9 @@ interface OpenMeteoSolarResponse {
     precipitation_probability_max: number[];
     wind_speed_10m_max: number[];
     wind_gusts_10m_max: number[];
+  };
+  hourly: {
+    time: string[];
+    pressure_msl: number[];
   };
 }

@@ -50,7 +50,7 @@ h3 {
 }
 
 .summary-panel,
-.nhc-panel,
+.cyclone-panel,
 .forecast-panel {
   display: grid;
   gap: 14px;
@@ -199,7 +199,7 @@ h3 {
   }
 }
 
-.nhc-status {
+.cyclone-status {
   display: grid;
   grid-template-columns: 34px 1fr;
   gap: 10px;
@@ -224,28 +224,28 @@ h3 {
   }
 }
 
-.nhc-low {
+.cyclone-clear {
   border-color: var(--app-success-border);
   background: var(--app-success-bg);
 }
 
-.nhc-watch {
+.cyclone-watch {
   border-color: #fde68a;
   background: #fffbeb;
 }
 
-.nhc-high {
+.cyclone-alert {
   border-color: var(--app-danger-border);
   background: var(--app-danger-bg);
 }
 
-.nhc-summary {
+.cyclone-summary {
   color: var(--app-text-soft);
   line-height: 1.55;
 }
 
-.nhc-details {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.cyclone-details {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   a {
     color: var(--app-primary-strong);
@@ -278,7 +278,7 @@ h3 {
   background: #3a2d0b;
 }
 
-:host-context([data-theme='dark']) .nhc-watch {
+:host-context([data-theme='dark']) .cyclone-watch {
   border-color: #a16207;
   background: #3a2d0b;
 }
@@ -366,7 +366,7 @@ dd {
 
   .forecast-grid,
   dl,
-  .nhc-details {
+  .cyclone-details {
     grid-template-columns: 1fr;
   }
 

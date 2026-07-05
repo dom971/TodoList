@@ -8,6 +8,8 @@ export interface SolarForecastDay {
   temperatureMin: number;
   precipitationProbabilityMax: number;
   precipitationSum: number;
+  pressureMean: number;
+  pressureDelta: number;
   windSpeedMax: number;
   windGustsMax: number;
   sunrise: string;

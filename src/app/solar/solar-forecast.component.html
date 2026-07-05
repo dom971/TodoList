@@ -3,7 +3,8 @@
     <p class="eyebrow">Module solaire</p>
     <h1 id="solar-title">Prévisions solaires</h1>
     <p class="muted-text">
-      Irradiation, météo, éphémérides et surveillance tropicale sur 7 jours à Petit-Canal.
+      Irradiation, météo, éphémérides, pression et surveillance tropicale sur 7 jours à
+      Petit-Canal.
     </p>
   </div>
 
@@ -11,7 +12,7 @@
     class="secondary-button"
     type="button"
     (click)="reload()"
-    [disabled]="solarForecastService.isLoading() || nhcOutlookService.isLoading()"
+    [disabled]="solarForecastService.isLoading() || cycloneAlertService.isLoading()"
   >
     Actualiser
   </button>
@@ -21,8 +22,8 @@
   <p class="error-message" role="alert">{{ solarForecastService.errorMessage() }}</p>
 }
 
-@if (nhcOutlookService.errorMessage()) {
-  <p class="error-message" role="alert">{{ nhcOutlookService.errorMessage() }}</p>
+@if (cycloneAlertService.errorMessage()) {
+  <p class="error-message" role="alert">{{ cycloneAlertService.errorMessage() }}</p>
 }
 
 <section class="summary-panel" aria-labelledby="solar-summary-title">
@@ -40,53 +41,39 @@
   }
 </section>
 
-<section class="nhc-panel" aria-labelledby="nhc-title">
+<section class="cyclone-panel" aria-labelledby="cyclone-title">
   <div>
-    <p class="eyebrow">NHC Atlantique</p>
-    <h2 id="nhc-title">Risque cyclonique officiel</h2>
+    <p class="eyebrow">Vigilance Météo-France</p>
+    <h2 id="cyclone-title">Alerte cyclonique Guadeloupe</h2>
   </div>
 
-  @if (nhcOutlookService.isLoading()) {
-    <p class="empty-copy">Chargement du bulletin NHC...</p>
-  } @else if (nhcOutlookService.outlook(); as outlook) {
-    <div class="nhc-status {{ getNhcPanelClass(outlook) }}">
-      <span class="pictogram" aria-hidden="true">{{ getNhcIcon(outlook) }}</span>
+  @if (cycloneAlertService.isLoading()) {
+    <p class="empty-copy">Chargement de la vigilance Météo-France...</p>
+  } @else if (cycloneAlertService.alert(); as alert) {
+    <div class="cyclone-status {{ getCyclonePanelClass(alert) }}">
+      <span class="pictogram" aria-hidden="true">{{ getCycloneIcon(alert) }}</span>
       <div>
-        <strong>{{ outlook.riskLabel }}</strong>
-        <small>Dernier bulletin : {{ formatDateTime(outlook.publishedAt) }}</small>
+        <strong>{{ alert.label }}</strong>
+        <small>Contrôle local : {{ formatDateTime(alert.checkedAt) }}</small>
       </div>
     </div>
 
-    <p class="nhc-summary">{{ outlook.summary }}</p>
+    <p class="cyclone-summary">{{ alert.detail }}</p>
 
-    <dl class="nhc-details">
-      <div>
-        <dt>Formation 48 h</dt>
-        <dd>
-          @if (outlook.formationChance48Hours !== null) {
-            {{ outlook.formationChance48Hours }}%
-          } @else {
-            Non signalée
-          }
-        </dd>
-      </div>
-      <div>
-        <dt>Formation 7 jours</dt>
-        <dd>
-          @if (outlook.formationChance7Days !== null) {
-            {{ outlook.formationChance7Days }}%
-          } @else {
-            Non signalée
-          }
-        </dd>
-      </div>
+    <dl class="cyclone-details">
       <div>
         <dt>Source</dt>
-        <dd><a [href]="outlook.sourceUrl" target="_blank" rel="noopener">NHC</a></dd>
+        <dd>
+          <a [href]="alert.sourceUrl" target="_blank" rel="noopener">Vigilance Guadeloupe</a>
+        </dd>
+      </div>
+      <div>
+        <dt>Type</dt>
+        <dd>Alerte officielle locale</dd>
       </div>
     </dl>
   } @else {
-    <p class="empty-copy">Bulletin NHC non chargé.</p>
+    <p class="empty-copy">Vigilance non chargée.</p>
   }
 </section>
 
@@ -100,6 +87,7 @@
       @for (day of solarForecastService.forecast(); track day.date) {
         @let weatherTrend = getWeatherTrend(day);
         @let temperatureTrend = getTemperatureTrend(day);
+        @let pressureTrend = getPressureTrend(day);
         @let moonPhase = getMoonPhase(day);
         @let stormRisk = getStormRisk(day);
 
@@ -125,6 +113,14 @@
             <div>
               <small>Températures</small>
               <b>{{ day.temperatureMin }}°C / {{ day.temperatureMax }}°C</b>
+            </div>
+          </div>
+
+          <div class="trend-row" aria-label="Pression atmosphérique">
+            <span class="pictogram" aria-hidden="true">{{ pressureTrend.icon }}</span>
+            <div>
+              <small>Pression</small>
+              <b>{{ day.pressureMean }} hPa · {{ pressureTrend.label }}</b>
             </div>
           </div>
 
@@ -164,6 +160,10 @@
             <div>
               <dt>Pluie</dt>
               <dd>{{ day.precipitationSum }} mm · {{ day.precipitationProbabilityMax }}%</dd>
+            </div>
+            <div>
+              <dt>Pression</dt>
+              <dd>{{ day.pressureMean }} hPa · {{ day.pressureDelta }} hPa</dd>
             </div>
             <div>
               <dt>Rafales</dt>

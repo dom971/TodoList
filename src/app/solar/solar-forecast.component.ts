@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 
-import { NhcOutlook } from './nhc-outlook.model';
-import { NhcOutlookService } from './nhc-outlook.service';
+import { CycloneAlert } from './cyclone-alert.model';
+import { CycloneAlertService } from './cyclone-alert.service';
 import { SolarForecastDay } from './solar-forecast.model';
 import { SolarForecastService } from './solar-forecast.service';
 
@@ -11,7 +11,7 @@ import { SolarForecastService } from './solar-forecast.service';
   styleUrl: './solar-forecast.component.scss',
 })
 export class SolarForecastComponent {
-  protected readonly nhcOutlookService = inject(NhcOutlookService);
+  protected readonly cycloneAlertService = inject(CycloneAlertService);
   protected readonly solarForecastService = inject(SolarForecastService);
 
   protected readonly bestDay = computed(() =>
@@ -25,15 +25,15 @@ export class SolarForecastComponent {
       void this.solarForecastService.loadForecast();
     }
 
-    if (!this.nhcOutlookService.outlook()) {
-      void this.nhcOutlookService.loadOutlook();
+    if (!this.cycloneAlertService.alert()) {
+      void this.cycloneAlertService.loadAlert();
     }
   }
 
   protected reload(): Promise<void> {
     return Promise.all([
       this.solarForecastService.loadForecast(),
-      this.nhcOutlookService.loadOutlook(),
+      this.cycloneAlertService.loadAlert(),
     ]).then(() => undefined);
   }
 
@@ -53,10 +53,6 @@ export class SolarForecastComponent {
   }
 
   protected formatDateTime(dateTime: string): string {
-    if (!dateTime) {
-      return 'Date non disponible';
-    }
-
     return new Intl.DateTimeFormat('fr-FR', {
       day: '2-digit',
       month: 'long',
@@ -65,17 +61,17 @@ export class SolarForecastComponent {
     }).format(new Date(dateTime));
   }
 
-  protected getNhcPanelClass(outlook: NhcOutlook): string {
-    return `nhc-${outlook.riskLevel}`;
+  protected getCyclonePanelClass(alert: CycloneAlert): string {
+    return `cyclone-${alert.level}`;
   }
 
-  protected getNhcIcon(outlook: NhcOutlook): string {
-    if (outlook.riskLevel === 'high') {
+  protected getCycloneIcon(alert: CycloneAlert): string {
+    if (alert.level === 'alert') {
       return '🌀';
     }
 
-    if (outlook.riskLevel === 'watch') {
-      return '🌊';
+    if (alert.level === 'watch') {
+      return '⚠️';
     }
 
     return '✅';
@@ -129,6 +125,18 @@ export class SolarForecastComponent {
     }
 
     return { icon: '🌡️', label: 'Tropical' };
+  }
+
+  protected getPressureTrend(day: SolarForecastDay): WeatherTrend {
+    if (day.pressureDelta <= -2) {
+      return { icon: '↘️', label: 'Pression en baisse' };
+    }
+
+    if (day.pressureDelta >= 2) {
+      return { icon: '↗️', label: 'Pression en hausse' };
+    }
+
+    return { icon: '➡️', label: 'Pression stable' };
   }
 
   protected getMoonPhase(day: SolarForecastDay): WeatherTrend {
@@ -191,13 +199,14 @@ export class SolarForecastComponent {
       day.windGustsMax >= 62 ||
       day.precipitationSum >= 25 ||
       day.precipitationProbabilityMax >= 75 ||
-      day.weatherCode >= 95
+      day.weatherCode >= 95 ||
+      day.pressureDelta <= -3
     ) {
       return {
         className: 'risk-watch',
         icon: '🌊',
         label: 'Onde tropicale possible',
-        detail: 'Pluie, orages ou rafales justifient une surveillance.',
+        detail: 'Pluie, orages, rafales ou baisse de pression justifient une surveillance.',
       };
     }
 
