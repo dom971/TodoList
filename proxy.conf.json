@@ -1,0 +1,10 @@
+{
+  "/nhc": {
+    "target": "https://www.nhc.noaa.gov",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/nhc": ""
+    }
+  }
+}

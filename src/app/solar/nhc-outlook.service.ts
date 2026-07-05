@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 import { NhcOutlook, NhcRiskLevel, NhcSystem } from './nhc-outlook.model';
 
-const NHC_ATLANTIC_OUTLOOK_URL = 'https://www.nhc.noaa.gov/gtwo.xml';
+const NHC_ATLANTIC_OUTLOOK_URL = '/nhc/gtwo.xml';
 const NHC_ATLANTIC_PAGE_URL = 'https://www.nhc.noaa.gov/gtwo.php?basin=atlc&fdays=7';
 
 @Injectable({
