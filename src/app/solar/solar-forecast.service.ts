@@ -28,7 +28,7 @@ SOLAR_FORECAST_URL.searchParams.set(
 );
 SOLAR_FORECAST_URL.searchParams.set('hourly', 'pressure_msl');
 SOLAR_FORECAST_URL.searchParams.set('timezone', 'America/Guadeloupe');
-SOLAR_FORECAST_URL.searchParams.set('forecast_days', '7');
+SOLAR_FORECAST_URL.searchParams.set('forecast_days', '8');
 
 @Injectable({
   providedIn: 'root',

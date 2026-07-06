@@ -3,7 +3,7 @@
     <p class="eyebrow">Module solaire</p>
     <h1 id="solar-title">Prévisions solaires</h1>
     <p class="muted-text">
-      Irradiation, météo, éphémérides, pression et surveillance tropicale sur 7 jours à
+      Irradiation, météo, éphémérides, pression et surveillance tropicale sur 8 jours à
       Petit-Canal.
     </p>
   </div>
@@ -38,6 +38,49 @@
       <strong>{{ formatDate(day.date) }}</strong>
       <small>{{ day.irradiationKwh }} kWh/m²</small>
     </div>
+  }
+</section>
+
+<section class="solar-chart-panel" aria-labelledby="solar-chart-title">
+  <div class="chart-heading">
+    <div>
+      <p class="eyebrow">Courbe solaire</p>
+      <h2 id="solar-chart-title">Irradiation sur 8 jours</h2>
+    </div>
+
+    @if (solarChart().points.length) {
+      <strong>{{ solarChart().maxValue }} kWh/m² max</strong>
+    }
+  </div>
+
+  @if (solarForecastService.isLoading()) {
+    <p class="empty-copy">Chargement du graphique...</p>
+  } @else if (solarChart(); as chart) {
+    @if (chart.points.length) {
+      <div class="solar-chart" role="img" aria-label="Graphique des prévisions solaires sur 8 jours">
+        <svg [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height" preserveAspectRatio="none">
+          <line
+            class="chart-axis"
+            x1="34"
+            [attr.y1]="chart.baseline"
+            x2="766"
+            [attr.y2]="chart.baseline"
+          />
+          <path class="chart-area" [attr.d]="chart.areaPath"></path>
+          <path class="chart-line" [attr.d]="chart.linePath"></path>
+
+          @for (point of chart.points; track point.date) {
+            <g class="chart-point">
+              <circle [attr.cx]="point.x" [attr.cy]="point.y" r="5"></circle>
+              <text [attr.x]="point.x" [attr.y]="point.y - 12">{{ point.value }}</text>
+              <text class="chart-label" [attr.x]="point.x" y="216">{{ point.label }}</text>
+            </g>
+          }
+        </svg>
+      </div>
+    } @else {
+      <p class="empty-copy">Aucune donnée solaire à tracer.</p>
+    }
   }
 </section>
 
@@ -78,7 +121,7 @@
 </section>
 
 <section class="forecast-panel" aria-labelledby="solar-forecast-title">
-  <h2 id="solar-forecast-title">7 prochains jours</h2>
+  <h2 id="solar-forecast-title">8 prochains jours</h2>
 
   @if (solarForecastService.isLoading()) {
     <p class="empty-copy">Chargement des prévisions...</p>

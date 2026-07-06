@@ -19,6 +19,7 @@ export class SolarForecastComponent {
       (first, second) => second.irradiationKwh - first.irradiationKwh,
     )[0],
   );
+  protected readonly solarChart = computed(() => this.getSolarChart(this.solarForecastService.forecast()));
 
   constructor() {
     if (!this.solarForecastService.forecast().length) {
@@ -42,6 +43,13 @@ export class SolarForecastComponent {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
+    }).format(new Date(`${date}T12:00:00`));
+  }
+
+  protected formatShortDate(date: string): string {
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: 'short',
     }).format(new Date(`${date}T12:00:00`));
   }
 
@@ -217,6 +225,45 @@ export class SolarForecastComponent {
       detail: 'Pas de signal fort sur les prévisions du jour.',
     };
   }
+
+  private getSolarChart(days: SolarForecastDay[]): SolarChart {
+    const width = 800;
+    const height = 240;
+    const paddingX = 34;
+    const top = 24;
+    const baseline = 182;
+    const maxValue = Math.max(1, ...days.map((day) => day.irradiationKwh));
+    const points = days.map((day, index) => {
+      const x = days.length === 1
+        ? width / 2
+        : paddingX + (index * (width - paddingX * 2)) / (days.length - 1);
+      const y = baseline - (day.irradiationKwh / maxValue) * (baseline - top);
+
+      return {
+        date: day.date,
+        label: this.formatShortDate(day.date),
+        value: day.irradiationKwh,
+        x: Number(x.toFixed(1)),
+        y: Number(y.toFixed(1)),
+      };
+    });
+    const linePath = points
+      .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+      .join(' ');
+    const areaPath = points.length
+      ? `${linePath} L ${points.at(-1)?.x} ${baseline} L ${points[0].x} ${baseline} Z`
+      : '';
+
+    return {
+      width,
+      height,
+      baseline,
+      maxValue: Number(maxValue.toFixed(1)),
+      linePath,
+      areaPath,
+      points,
+    };
+  }
 }
 
 interface WeatherTrend {
@@ -227,4 +274,22 @@ interface WeatherTrend {
 interface StormRisk extends WeatherTrend {
   className: string;
   detail: string;
+}
+
+interface SolarChart {
+  width: number;
+  height: number;
+  baseline: number;
+  maxValue: number;
+  linePath: string;
+  areaPath: string;
+  points: SolarChartPoint[];
+}
+
+interface SolarChartPoint {
+  date: string;
+  label: string;
+  value: number;
+  x: number;
+  y: number;
 }
